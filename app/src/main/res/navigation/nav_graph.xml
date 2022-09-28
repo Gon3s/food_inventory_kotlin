@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.gones.foodinventorykotlin.ui.home.fragment.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_scan"
+            app:destination="@id/scanFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.gones.foodinventorykotlin.ui.scan.fragment.ScanFragment"
+        android:label="ScanFragment"
+        tools:layout="@layout/fragment_scan">
+
+        <action
+            android:id="@+id/action_scan_to_product"
+            app:popUpTo="@id/homeFragment"
+            app:destination="@id/productFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.gones.foodinventorykotlin.ui.product.fragment.ProductFragment"
+        android:label="ProductFragment"
+        tools:layout="@layout/fragment_product">
+
+        <argument
+            android:name="barcode"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
+</navigation>
