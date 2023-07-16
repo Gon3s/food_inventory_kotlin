@@ -1,19 +1,20 @@
 package com.gones.foodinventorykotlin.ui.product.viewmodel;
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.gones.foodinventorykotlin.domain.entity.InvalidProductException
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.resource.Resource
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import com.gones.foodinventorykotlin.ui.product.event.ProductAddEvent
-import com.gones.foodinventorykotlin.ui.scan.viewmodel.ScanViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 

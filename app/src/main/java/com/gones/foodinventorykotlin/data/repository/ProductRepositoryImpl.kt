@@ -1,5 +1,6 @@
 package com.gones.foodinventorykotlin.data.repository
 
+import androidx.lifecycle.LiveData
 import com.gones.foodinventorykotlin.data.api.RemoteApi
 import com.gones.foodinventorykotlin.data.database.ProductDao
 import com.gones.foodinventorykotlin.domain.entity.Product
@@ -13,6 +14,10 @@ class ProductRepositoryImpl(
     override suspend fun getProduct(barcode: String): ProductResult {
         val productResultResponse = remoteApi.getProduct(barcode)
         return productResultResponse.toModel()
+    }
+
+    override fun getProduct(): LiveData<List<Product>> {
+        return productDao.getProducts()
     }
 
     override suspend fun insertProduct(product: Product) {

@@ -6,8 +6,8 @@ import com.gones.foodinventorykotlin.data.api.RemoteApi
 import com.gones.foodinventorykotlin.data.database.createDatabase
 import com.gones.foodinventorykotlin.data.database.createProductDao
 import com.gones.foodinventorykotlin.data.repository.ProductRepositoryImpl
-import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
+import com.gones.foodinventorykotlin.ui.home.viewmodel.HomeViewModel
 import com.gones.foodinventorykotlin.ui.product.viewmodel.ProductAddViewModel
 import com.gones.foodinventorykotlin.ui.scan.viewmodel.ScanViewModel
 import createApiClient
@@ -25,6 +25,7 @@ val appModules by lazy {
 }
 
 val viewModelModule: Module = module {
+    viewModel { HomeViewModel(get()) }
     viewModel { ScanViewModel(get()) }
     viewModel { (barcode: String) -> ProductAddViewModel(get(), barcode) }
 }
@@ -34,7 +35,7 @@ val useCaseModule: Module = module {
 }
 
 val repositoryModule: Module = module {
-    single { ProductRepositoryImpl(remoteApi = get(), productDao = get()) as ProductRepository }
+    single { ProductRepositoryImpl(remoteApi = get(), productDao = get()) }
 }
 
 val dataModule: Module = module {

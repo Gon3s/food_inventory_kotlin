@@ -1,7 +1,5 @@
 package com.gones.foodinventorykotlin.ui.product.event
 
-import com.gones.foodinventorykotlin.domain.entity.Product
-
 sealed class ProductAddEvent {
     data class EnteredName(val name: String): ProductAddEvent()
     data class EnteredBrands(val brands: String): ProductAddEvent()
