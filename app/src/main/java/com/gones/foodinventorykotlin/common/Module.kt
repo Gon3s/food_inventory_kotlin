@@ -6,6 +6,7 @@ import com.gones.foodinventorykotlin.data.api.RemoteApi
 import com.gones.foodinventorykotlin.data.database.createDatabase
 import com.gones.foodinventorykotlin.data.database.createProductDao
 import com.gones.foodinventorykotlin.data.repository.ProductRepositoryImpl
+import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import com.gones.foodinventorykotlin.ui.home.viewmodel.HomeViewModel
 import com.gones.foodinventorykotlin.ui.product.viewmodel.ProductAddViewModel
@@ -35,7 +36,7 @@ val useCaseModule: Module = module {
 }
 
 val repositoryModule: Module = module {
-    single { ProductRepositoryImpl(remoteApi = get(), productDao = get()) }
+    single { ProductRepositoryImpl(remoteApi = get(), productDao = get()) as ProductRepository }
 }
 
 val dataModule: Module = module {

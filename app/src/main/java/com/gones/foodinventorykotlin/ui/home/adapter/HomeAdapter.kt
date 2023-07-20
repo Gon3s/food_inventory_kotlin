@@ -6,8 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.gones.foodinventorykotlin.R
+import com.gones.foodinventorykotlin.databinding.ItemProductBinding
 import com.gones.foodinventorykotlin.domain.entity.Product
+import timber.log.Timber
 
 class HomeAdapter: RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     inner class HomeViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
@@ -35,15 +38,23 @@ class HomeAdapter: RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     }
 
     override fun getItemCount(): Int {
+        Timber.d("DLOG:: getItemCount: ${differ.currentList.size}")
         return differ.currentList.size
     }
 
     private var onItemClickListener: ((Product) -> Unit)? = null
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
+        Timber.d("DLOG:: onBindViewHolder: ${differ.currentList[position].productName}")
+        val binding = ItemProductBinding.bind(holder.itemView)
         val product = differ.currentList[position]
 
         holder.itemView.apply {
+            Glide.with(this).load(product.imageUrl).into(binding.imageViewProduct)
+            binding.productBrands.text = product.brands
+            binding.productName.text = product.productName
+            binding.productDate.text = product.expiry_date.toString()
+
             setOnClickListener {
                 onItemClickListener?.let { it(product) }
             }
