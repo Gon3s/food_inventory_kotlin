@@ -2,12 +2,11 @@ package com.gones.foodinventorykotlin.data.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.gones.foodinventorykotlin.data.model.ProductResponse
 import com.gones.foodinventorykotlin.domain.entity.Product
 
 @Dao
 interface ProductDao {
-    @Query("SELECT * FROM product")
+    @Query("SELECT *, COUNT(*) as quantity, GROUP_CONCAT(expiry_date) as expiries_dates FROM product GROUP BY barcode")
     fun getProducts(): LiveData<List<Product>>
 
     @Query("SELECT * FROM product WHERE barcode = :barcode LIMIT 1")

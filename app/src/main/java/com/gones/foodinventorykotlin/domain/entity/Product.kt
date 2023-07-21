@@ -5,7 +5,6 @@ import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
 import kotlinx.parcelize.Parcelize
 
 @Keep
@@ -13,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "product")
 data class Product(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name="id")
+    @ColumnInfo(name = "id")
     val id: Int = 0,
     @ColumnInfo(name = "barcode")
     val barcode: String,
@@ -25,10 +24,10 @@ data class Product(
     val imageUrl: String,
     @ColumnInfo(name = "product_name")
     var productName: String,
-    @ColumnInfo(name = "quantity")
-    var quantity: Int = 1,
     @ColumnInfo(name = "expiry_date")
-    var expiry_date: Long = 0L
-): Parcelable
+    var expiry_date: Long = 0L,
+    var quantity: Int? = null,
+    var expiries_dates: String = "",
+) : Parcelable
 
-class InvalidProductException(message: String): Exception(message)
+class InvalidProductException(message: String) : Exception(message)

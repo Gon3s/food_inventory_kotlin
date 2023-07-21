@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -26,9 +25,9 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.util.Date
 
 class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBinding::inflate) {
     private val arguments: ProductFragmentArgs by navArgs()
@@ -45,12 +44,12 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
         lifecycleScope.launchWhenStarted {
             launch {
-                Log.i("ProductAdd", "lifecycleScope.launch")
                 viewModel.eventFlow.collectLatest { event ->
                     when (event) {
                         is ProductAddViewModel.UiEvent.ShowSnackbar -> {
                             Snackbar.make(binding.root, event.message, Snackbar.LENGTH_LONG).show()
                         }
+
                         is ProductAddViewModel.UiEvent.SaveNote -> {
                             mainNavController().navigateUp()
                         }
@@ -60,14 +59,17 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
             launch {
                 viewModel.product.collect { productResource ->
-                    Log.i("ProductAdd", "viewModel.getProduct().collect")
                     when (productResource) {
                         is Resource.Success -> {
                             paintView(productResource.data)
                         }
 
                         is Resource.Failure -> {
-                            Snackbar.make(binding.root, productResource.throwable.message.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                binding.root,
+                                productResource.throwable.message.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                         }
 
                         is Resource.Progress -> {
@@ -82,6 +84,7 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
         (activity as MainActivity).supportActionBar?.title = "Ajouter un produit"
     }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.product_menu, menu);
 
@@ -89,11 +92,12 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return (when(item.itemId) {
+        return (when (item.itemId) {
             R.id.save -> {
                 viewModel.onEvent(ProductAddEvent.SaveProduct)
                 true
             }
+
             else ->
                 super.onOptionsItemSelected(item)
         })
@@ -101,7 +105,8 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
     private fun paintView(product: Product) {
         Glide.with(binding.imageViewProduct.context).load(product.imageUrl).transition(
-            DrawableTransitionOptions.withCrossFade()).into(binding.imageViewProduct)
+            DrawableTransitionOptions.withCrossFade()
+        ).into(binding.imageViewProduct)
 
         /**
          * Name
@@ -180,11 +185,9 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                 .setTitleText("Date de péremption")
                 .build()
             picker.addOnPositiveButtonClickListener { selection: Any ->
-                Log.i("FormActivity", selection.toString())
                 val date = Date(selection as Long)
-                val dateFormat =
-                    DateFormat.getDateFormat(context)
-                binding.productDate.editText!!.setText(dateFormat.format(date))
+                val dateFormat = DateFormat.getDateFormat(context)
+                binding.productDate.editText?.setText(dateFormat.format(date))
                 viewModel.onEvent(ProductAddEvent.EnteredExpiryDate(selection))
             }
             picker.show(requireActivity().supportFragmentManager, "TOTO")

@@ -1,5 +1,6 @@
 package com.gones.foodinventorykotlin.ui.home.adapter
 
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,10 @@ import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.databinding.ItemProductBinding
 import com.gones.foodinventorykotlin.domain.entity.Product
 import timber.log.Timber
+import java.util.Date
 
-class HomeAdapter: RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
-    inner class HomeViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
+class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+    inner class HomeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     private val differCallback = object : DiffUtil.ItemCallback<Product>() {
         override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
@@ -53,7 +55,22 @@ class HomeAdapter: RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
             Glide.with(this).load(product.imageUrl).into(binding.imageViewProduct)
             binding.productBrands.text = product.brands
             binding.productName.text = product.productName
-            binding.productDate.text = product.expiry_date.toString()
+
+            Timber.d("DLOG:: onBindViewHolder: Date ${product.expiries_dates}")
+
+            val expiriesDates: MutableList<String> = mutableListOf()
+            product.expiries_dates?.let {
+                it.split(",").forEach { date ->
+                    val dateFormat = DateFormat.getDateFormat(context)
+                    expiriesDates += dateFormat.format(Date(date.toLong()))
+                }
+            }
+
+            binding.productDate.text = expiriesDates.joinToString(", ")
+
+            product.quantity?.let {
+                binding.productQuantity.text = it.toString()
+            }
 
             setOnClickListener {
                 onItemClickListener?.let { it(product) }

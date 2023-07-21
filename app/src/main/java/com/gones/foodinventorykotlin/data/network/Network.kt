@@ -1,5 +1,6 @@
+package com.gones.foodinventorykotlin.data.network
+
 import com.gones.foodinventorykotlin.BuildConfig
-import com.gones.foodinventorykotlin.data.network.WSApiInterceptor
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -9,15 +10,15 @@ import java.util.concurrent.TimeUnit
 
 private const val WS_CALL_TIMEOUT_SECONDS = 60L
 
-        fun createApiClient(): Retrofit =
-        Retrofit.Builder()
+fun createApiClient(): Retrofit =
+    Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)
         .client(wsHttpClient())
         .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
         .build()
 
-        fun wsHttpClient() : OkHttpClient =
-        OkHttpClient.Builder()
+fun wsHttpClient(): OkHttpClient =
+    OkHttpClient.Builder()
         .addInterceptor(WSApiInterceptor())
         .callTimeout(WS_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .addNetworkInterceptor(HttpLoggingInterceptor().setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE))

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ui.home.fragment.HomeFragment">
@@ -17,8 +17,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -27,16 +27,16 @@
         android:id="@+id/linearLayoutInfoProduit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/productName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nom du produit"
+            android:layout_marginBottom="16dp"
             android:layout_weight="1"
-            android:layout_marginBottom="16dp">
+            android:hint="Nom du produit">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -49,9 +49,9 @@
             android:id="@+id/productBrands"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Marques"
+            android:layout_marginBottom="16dp"
             android:layout_weight="1"
-            android:layout_marginBottom="16dp">
+            android:hint="Marques">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -62,58 +62,58 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_gravity="center"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/productQuantity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Quantité"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="4dp">
+                android:hint="Quantité">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:text="1"/>
+                    android:text="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/productQuantityMore"
+                style="@style/Widget.MaterialComponents.Button.Icon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                style="@style/Widget.MaterialComponents.Button.Icon"
-                app:icon="@drawable/ic_add"
-                app:iconSize="24dp"
-                app:iconGravity="textStart"
-                android:padding="0dp"
-                app:iconPadding="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 android:insetLeft="0dp"
                 android:insetTop="0dp"
                 android:insetRight="0dp"
                 android:insetBottom="0dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="16dp"
+                android:padding="0dp"
+                app:icon="@drawable/ic_add"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Theme.Button.Circle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/productQuantityLess"
+                style="@style/Widget.MaterialComponents.Button.Icon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                style="@style/Widget.MaterialComponents.Button.Icon"
-                app:icon="@drawable/ic_minus"
-                app:iconSize="24dp"
-                app:iconGravity="textStart"
-                android:padding="0dp"
-                app:iconPadding="0dp"
                 android:insetLeft="0dp"
                 android:insetTop="0dp"
                 android:insetRight="0dp"
                 android:insetBottom="0dp"
+                android:padding="0dp"
+                app:icon="@drawable/ic_minus"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Theme.Button.Circle" />
 
         </LinearLayout>
@@ -122,15 +122,15 @@
             android:id="@+id/productDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date de péremption"
+            android:layout_marginTop="16dp"
             android:layout_weight="1"
-            android:layout_marginTop="16dp">
+            android:hint="Date de péremption">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:focusable="false" />
+                android:focusable="false"
+                android:inputType="date" />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
