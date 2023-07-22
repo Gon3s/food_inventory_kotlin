@@ -1,26 +1,33 @@
 package com.gones.foodinventorykotlin.data.repository
 
-import androidx.lifecycle.LiveData
 import com.gones.foodinventorykotlin.data.api.RemoteApi
-import com.gones.foodinventorykotlin.data.database.ProductDao
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.entity.ProductResult
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 class ProductRepositoryImpl(
     private val remoteApi: RemoteApi,
-    private val productDao: ProductDao
+    private val supabaseClient: SupabaseClient,
 ) : ProductRepository {
     override suspend fun getProduct(barcode: String): ProductResult {
         val productResultResponse = remoteApi.getProduct(barcode)
         return productResultResponse.toModel()
     }
 
-    override fun getProduct(): LiveData<List<Product>> {
-        return productDao.getProducts()
+    override suspend fun getProducts(): Flow<List<Product>> = flow {
+        val products = withContext(Dispatchers.IO) {
+            supabaseClient.postgrest["product"].select().decodeList<Product>()
+        }
+        emit(products)
     }
 
     override suspend fun insertProduct(product: Product) {
-        productDao.insertProduct(product)
+        supabaseClient.postgrest["product"].insert(product)
     }
 }

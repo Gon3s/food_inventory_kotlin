@@ -73,12 +73,14 @@ class ProductAddViewModel(
                         )
                         _eventFlow.emit(UiEvent.SaveNote)
                     } catch (e: InvalidProductException) {
+                        Timber.e("DLOG: SaveProduct - InvalidProductException: ${e.message}")
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 message = e.message ?: "Couldn't save note"
                             )
                         )
                     } catch (e: Exception) {
+                        Timber.e("DLOG: SaveProduct - Exception: ${e.message}")
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 message = e.message ?: "Couldn't save note"

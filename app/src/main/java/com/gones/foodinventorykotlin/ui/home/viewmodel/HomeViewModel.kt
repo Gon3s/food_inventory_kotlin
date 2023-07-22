@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 
 class HomeViewModel(
-    private val productUseCase: ProductUseCase
+    private val productUseCase: ProductUseCase,
 ) : ViewModel() {
-    fun getProducts() = productUseCase.getProducts()
+
+    suspend fun getProducts() = productUseCase.getProducts()
 }

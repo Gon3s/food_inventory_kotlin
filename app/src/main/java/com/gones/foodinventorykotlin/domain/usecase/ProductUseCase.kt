@@ -1,9 +1,9 @@
 package com.gones.foodinventorykotlin.domain.usecase
 
-import androidx.lifecycle.LiveData
 import com.gones.foodinventorykotlin.domain.entity.InvalidProductException
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ProductUseCase(
@@ -25,7 +25,7 @@ class ProductUseCase(
         }
     }
 
-    fun getProducts(): LiveData<List<Product>> {
-        return productRepository.getProduct()
+    suspend fun getProducts(): Flow<List<Product>> {
+        return productRepository.getProducts()
     }
 }

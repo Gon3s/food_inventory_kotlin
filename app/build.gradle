@@ -4,7 +4,9 @@ plugins {
     id 'kotlin-parcelize'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
 }
+
 
 android {
     compileSdk 34
@@ -17,16 +19,21 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        Properties secretProperties = new Properties()
+        secretProperties.load(project.rootProject.file('secrets.properties').newDataInputStream())
+        
+        buildConfigField "String", 'BASE_URL', "\"https://fr.openfoodfacts.org/api/v0/\""
+        buildConfigField "String", 'SUPABASE_URL', "\"${secretProperties.getProperty('SUPABASE_URL')}\""
+        buildConfigField "String", 'SUPABASE_KEY', "\"${secretProperties.getProperty('SUPABASE_KEY')}\""
     }
 
     buildTypes {
         debug {
-            buildConfigField "String", 'BASE_URL', "\"https://fr.openfoodfacts.org/api/v0/\""
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", 'BASE_URL', "\"https://fr.openfoodfacts.org/api/v0/\""
         }
     }
     compileOptions {
@@ -57,12 +64,18 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2'
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'io.ktor:ktor-client-android:2.3.2'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
+
 
     // Version
-    def koin_version= '3.4.2'
+    def koin_version = '3.4.2'
     def retrofit_version = "2.9.0"
     def logging_interceptor_version = '5.0.0-alpha.11'
     def navigation_version = '2.6.0'
+    def supabase_version = '1.2.0-alpha-3'
 
     /* Navigation */
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
@@ -92,6 +105,9 @@ dependencies {
 
     /* Timber */
     implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    /* Supabase */
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:$supabase_version")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
