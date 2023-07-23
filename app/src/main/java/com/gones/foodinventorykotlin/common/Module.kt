@@ -7,7 +7,7 @@ import com.gones.foodinventorykotlin.data.repository.ProductRepositoryImpl
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import com.gones.foodinventorykotlin.ui.home.viewmodel.HomeViewModel
-import com.gones.foodinventorykotlin.ui.product.viewmodel.ProductAddViewModel
+import com.gones.foodinventorykotlin.ui.product.viewmodel.ProductViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -23,7 +23,7 @@ val appModules by lazy {
 
 val viewModelModule: Module = module {
     viewModel { HomeViewModel(get()) }
-    viewModel { (barcode: String) -> ProductAddViewModel(get(), barcode) }
+    viewModel { (barcode: String) -> ProductViewModel(get(), barcode) }
 }
 
 val useCaseModule: Module = module {

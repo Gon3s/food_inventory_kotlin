@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class ProductAddViewModel(
+class ProductViewModel(
     private val productUseCase: ProductUseCase,
     private val barcode: String,
 ) : ViewModel() {

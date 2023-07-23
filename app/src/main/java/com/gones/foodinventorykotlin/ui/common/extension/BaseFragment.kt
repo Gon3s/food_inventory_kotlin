@@ -7,16 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
-open class BaseFragment<Binding: ViewBinding>(private val inflateMethod : (LayoutInflater, ViewGroup?, Boolean) -> Binding): Fragment() {
+open class BaseFragment<Binding : ViewBinding>(private val inflateMethod: (LayoutInflater, ViewGroup?, Boolean) -> Binding) :
+    Fragment() {
     private var _binding: Binding? = null
     val binding get() = _binding!!
 
     // Make it open, so it can be overridden in child fragments
-    open fun Binding.initialize(){}
+    open fun Binding.initialize() {}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = inflateMethod(inflater, container, false)
 
