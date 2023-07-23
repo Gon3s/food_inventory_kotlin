@@ -15,7 +15,7 @@ class ProductRepositoryImpl(
     private val remoteApi: RemoteApi,
     private val supabaseClient: SupabaseClient,
 ) : ProductRepository {
-    override suspend fun getProduct(barcode: String): ProductResult {
+    override suspend fun getProductByEanWS(barcode: String): ProductResult {
         val productResultResponse = remoteApi.getProduct(barcode)
         return productResultResponse.toModel()
     }
@@ -29,5 +29,33 @@ class ProductRepositoryImpl(
 
     override suspend fun insertProduct(product: Product) {
         supabaseClient.postgrest["product"].insert(product)
+    }
+
+    override suspend fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
+        val product = withContext(Dispatchers.IO) {
+            supabaseClient.postgrest["product"].select() {
+                eq("barcode", barcode)
+            }.decodeList<Product>()
+        }
+        emit(product)
+    }
+
+    override suspend fun getProductById(id: Int): Flow<Product> = flow {
+        val product = withContext(Dispatchers.IO) {
+            supabaseClient.postgrest["product"].select() {
+                eq("id", id)
+            }.decodeSingle<Product>()
+        }
+        emit(product)
+    }
+
+    override suspend fun updateProduct(product: Product) {
+        supabaseClient.postgrest["product"].update(product)
+    }
+
+    override suspend fun deleteProduct(product: Product) {
+        supabaseClient.postgrest["product"].delete() {
+            eq("id", product.id)
+        }
     }
 }

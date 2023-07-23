@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.flow
 class ProductUseCase(
     private val productRepository: ProductRepository,
 ) {
-    fun getProduct(barcode: String) = flow<Product> {
-        productRepository.getProduct(barcode).product?.let { emit(it) }
+    fun getProductByEanWS(barcode: String) = flow {
+        productRepository.getProductByEanWS(barcode).product?.let { emit(it) }
     }
 
     suspend fun addProduct(product: Product, quantity: Int) {
@@ -25,7 +25,7 @@ class ProductUseCase(
         }
     }
 
-    suspend fun getProducts(): Flow<List<Product>> {
-        return productRepository.getProducts()
-    }
+    suspend fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
+    suspend fun getProductByEan(barcode: String): Flow<List<Product>> =
+        productRepository.getProductsByEan(barcode)
 }

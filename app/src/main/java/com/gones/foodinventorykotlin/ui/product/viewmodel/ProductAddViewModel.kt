@@ -29,17 +29,26 @@ class ProductAddViewModel(
     private val _product = MutableStateFlow<Resource<Product>>(Resource.Progress())
     val product: StateFlow<Resource<Product>> = _product
 
+    private val _products = MutableStateFlow<Resource<List<Product>>>(Resource.Progress())
+    val products: StateFlow<Resource<List<Product>>> = _products
+
     private lateinit var productToUpdate: Product
     private var quantity: Int = 1
 
     fun getProduct() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                productUseCase.getProduct(barcode).catch { e ->
+                productUseCase.getProductByEanWS(barcode).catch { e ->
                     _product.value = (Resource.failure(e))
                 }.collect { product ->
                     _product.value = (Resource.success(product))
                     productToUpdate = product
+                }
+
+                productUseCase.getProductByEan(barcode).catch { e ->
+                    _product.value = (Resource.failure(e))
+                }.collect { products ->
+                    _products.value = (Resource.success(products))
                 }
             }
         }
