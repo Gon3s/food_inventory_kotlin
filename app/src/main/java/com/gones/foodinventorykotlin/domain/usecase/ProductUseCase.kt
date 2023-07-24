@@ -25,6 +25,13 @@ class ProductUseCase(
         }
     }
 
+    suspend fun updateProduct(product: Product) {
+        if (product.productName.isBlank()) {
+            throw InvalidProductException("The name of the product can't be empty.")
+        }
+        productRepository.updateProduct(product)
+    }
+
     suspend fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
     suspend fun getProductByEan(barcode: String): Flow<List<Product>> =
         productRepository.getProductsByEan(barcode)

@@ -47,6 +47,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.rvSavedProducts.apply {
             adapter = homeAdapter
             layoutManager = LinearLayoutManager(activity)
+            homeAdapter.setOnItemClickListener {
+                mainNavController().navigate(HomeFragmentDirections.actionHomeToProduct(id = it.id.toString()))
+            }
         }
     }
 }

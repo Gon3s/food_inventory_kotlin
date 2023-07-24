@@ -37,7 +37,7 @@ import java.util.Date
 class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBinding::inflate) {
     private val arguments: ProductFragmentArgs by navArgs()
     private val viewModel: ProductViewModel by viewModel {
-        parametersOf(arguments.barcode)
+        parametersOf(arguments.barcode, arguments.id)
     }
     lateinit var otherProductAdapter: OtherProductAdapter
 
@@ -64,7 +64,11 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                                     .show()
                             }
 
-                            is ProductViewModel.UiEvent.SaveNote -> {
+                            is ProductViewModel.UiEvent.ProductCreated -> {
+                                mainNavController().navigateUp()
+                            }
+
+                            is ProductViewModel.UiEvent.ProductUpdated -> {
                                 mainNavController().navigateUp()
                             }
                         }

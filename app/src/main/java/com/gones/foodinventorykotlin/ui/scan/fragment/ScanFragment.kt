@@ -26,7 +26,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>(FragmentScanBinding::infl
             if (result.contents == null) {
                 Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG).show()
             } else {
-                mainNavController().navigate(ScanFragmentDirections.actionScanToProduct(result.contents))
+                mainNavController().navigate(ScanFragmentDirections.actionScanToProduct(barcode = result.contents))
             }
         }
     }
