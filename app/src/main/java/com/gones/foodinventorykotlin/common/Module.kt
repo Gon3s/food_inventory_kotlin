@@ -23,8 +23,13 @@ val appModules by lazy {
 
 val viewModelModule: Module = module {
     viewModel { HomeViewModel(get()) }
-    viewModel { (barcode: String?) -> ProductViewModel(get(), barcode = barcode) }
-    viewModel { (id: String?) -> ProductViewModel(get(), id = id) }
+    viewModel { (barcode: String?, id: String?) ->
+        ProductViewModel(
+            get(),
+            barcode = barcode,
+            id = id
+        )
+    }
 }
 
 val useCaseModule: Module = module {

@@ -24,7 +24,7 @@ class ProductViewModel(
     private val id: String? = null,
 ) : ViewModel() {
 
-    private enum class TYPES {
+    enum class TYPES {
         CREATE, UPDATE
     }
 
@@ -39,14 +39,14 @@ class ProductViewModel(
 
     private lateinit var productToUpdate: Product
     private var quantity: Int = 1
-    private lateinit var type: TYPES
+    var type: TYPES = (id?.let { TYPES.UPDATE } ?: TYPES.CREATE)
 
     fun getProduct() {
+        Timber.d("DLOG: getProduct - barcode: $barcode, id: $id")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 barcode?.let {
-                    type = TYPES.CREATE
-
+                    Timber.d("DLOG: getProductByEanWS: $barcode")
                     productUseCase.getProductByEanWS(barcode).catch { e ->
                         _product.value = (Resource.failure(e))
                     }.collect { product ->
@@ -62,8 +62,7 @@ class ProductViewModel(
                 }
 
                 id?.let {
-                    type = TYPES.UPDATE
-
+                    Timber.d("DLOG: getProductById: $id")
                     productUseCase.getProductById(id.toInt()).catch { e ->
                         _product.value = (Resource.failure(e))
                     }.collect { product ->
@@ -90,7 +89,6 @@ class ProductViewModel(
             }
 
             is ProductAddEvent.EnteredExpiryDate -> {
-                Timber.d("DLOG: EnteredExpiryDate: ${event.expiryDate}")
                 productToUpdate.expiry_date = event.expiryDate
             }
 
@@ -99,6 +97,7 @@ class ProductViewModel(
                     try {
                         when (type) {
                             TYPES.CREATE -> {
+                                Timber.d("DLOG: addProduct - productToUpdate: $productToUpdate")
                                 productUseCase.addProduct(
                                     productToUpdate,
                                     quantity
@@ -108,6 +107,8 @@ class ProductViewModel(
                             }
 
                             TYPES.UPDATE -> {
+                                Timber.d("DLOG: updateProduct - productToUpdate: $productToUpdate")
+
                                 productUseCase.updateProduct(
                                     productToUpdate
                                 )

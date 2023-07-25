@@ -77,6 +77,18 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
                 launch {
                     viewModel.product.collect { productResource ->
+                        Timber.d("DLOG: product.collect: $productResource")
+
+                        if (viewModel.type == ProductViewModel.TYPES.UPDATE) {
+                            binding.linearLayoutOtherProducts.visibility = View.GONE
+                            binding.linearLayoutQuantity.visibility = View.GONE
+                            binding.buttonRemoveProduct.visibility = View.VISIBLE
+                        } else {
+                            binding.linearLayoutOtherProducts.visibility = View.VISIBLE
+                            binding.linearLayoutQuantity.visibility = View.VISIBLE
+                            binding.buttonRemoveProduct.visibility = View.GONE
+                        }
+
                         when (productResource) {
                             is Resource.Success -> {
                                 binding.linearLayoutMain.visibility = View.VISIBLE
@@ -107,12 +119,11 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                     viewModel.products.collect {
                         when (it) {
                             is Resource.Success -> {
-                                binding.linearLayoutOtherProducts.visibility = View.GONE
+                                binding.frameLayoutOtherProducts.visibility = View.GONE
                                 binding.recyclerViewOtherProducts.visibility = View.VISIBLE
                                 binding.progressBarOtherProducts.visibility = View.GONE
                                 binding.textviewMainError.visibility = View.GONE
 
-                                Timber.d("DLOG: ${it.data}")
                                 if (it.data.isEmpty()) {
                                     binding.textviewNoProduct.visibility = View.VISIBLE
                                 } else {
@@ -123,7 +134,7 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                             }
 
                             is Resource.Failure -> {
-                                binding.linearLayoutOtherProducts.visibility = View.VISIBLE
+                                binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                 binding.recyclerViewOtherProducts.visibility = View.GONE
                                 binding.progressBarOtherProducts.visibility = View.GONE
                                 binding.textviewNoProduct.visibility = View.GONE
@@ -132,7 +143,7 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                             }
 
                             is Resource.Progress -> {
-                                binding.linearLayoutOtherProducts.visibility = View.VISIBLE
+                                binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                 binding.recyclerViewOtherProducts.visibility = View.GONE
                                 binding.textviewError.visibility = View.GONE
                                 binding.textviewNoProduct.visibility = View.GONE
@@ -146,7 +157,14 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
         viewModel.getProduct()
 
-        (activity as MainActivity).supportActionBar?.title = "Ajouter un produit"
+        (activity as MainActivity).supportActionBar?.title =
+            (viewModel.type == ProductViewModel.TYPES.UPDATE).let {
+                if (it) {
+                    "Modifier un produit"
+                } else {
+                    "Ajouter un produit"
+                }
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
