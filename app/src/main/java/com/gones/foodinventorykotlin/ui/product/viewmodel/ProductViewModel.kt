@@ -92,6 +92,14 @@ class ProductViewModel(
                 productToUpdate.expiry_date = event.expiryDate
             }
 
+            is ProductAddEvent.Consume -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    productUseCase.consumedProduct(productToUpdate)
+
+                    _eventFlow.emit(UiEvent.ProductUpdated)
+                }
+            }
+
             is ProductAddEvent.SaveProduct -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {

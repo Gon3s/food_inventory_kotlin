@@ -250,11 +250,39 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonRemoveProduct"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Retirer" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonConsumeProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Retirer"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/linearLayoutConsumeProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Consommé le : "
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/textViewConsumedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="DD/MM/YYYY" />
+            </LinearLayout>
+        </FrameLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

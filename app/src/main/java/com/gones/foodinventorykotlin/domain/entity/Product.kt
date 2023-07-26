@@ -15,6 +15,10 @@ data class Product(
     var expiry_date: Long = 0L,
     @Serializable(with = InstantIso8601Serializer::class)
     var created_at: Instant? = null,
+    var consumed: Boolean = false,
+    @Serializable(with = InstantIso8601Serializer::class)
+    var consumed_at: Instant? = null,
+    var note: String? = null,
 )
 
 class InvalidProductException(message: String) : Exception(message)

@@ -5,6 +5,7 @@ import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.datetime.Clock
 
 class ProductUseCase(
     private val productRepository: ProductRepository,
@@ -37,4 +38,10 @@ class ProductUseCase(
         productRepository.getProductsByEan(barcode)
 
     suspend fun getProductById(id: Int): Flow<Product> = productRepository.getProductById(id)
+
+    suspend fun consumedProduct(product: Product) {
+        product.consumed = true
+        product.consumed_at = Clock.System.now()
+        productRepository.updateProduct(product)
+    }
 }

@@ -1,5 +1,6 @@
 package com.gones.foodinventorykotlin.ui.product.fragment
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -29,6 +30,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toJavaInstant
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -82,11 +84,11 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                         if (viewModel.type == ProductViewModel.TYPES.UPDATE) {
                             binding.linearLayoutOtherProducts.visibility = View.GONE
                             binding.linearLayoutQuantity.visibility = View.GONE
-                            binding.buttonRemoveProduct.visibility = View.VISIBLE
                         } else {
                             binding.linearLayoutOtherProducts.visibility = View.VISIBLE
                             binding.linearLayoutQuantity.visibility = View.VISIBLE
-                            binding.buttonRemoveProduct.visibility = View.GONE
+                            binding.buttonConsumeProduct.visibility = View.GONE
+                            binding.linearLayoutConsumeProduct.visibility = View.GONE
                         }
 
                         when (productResource) {
@@ -277,6 +279,29 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
         binding.textviewMainError.visibility = View.GONE
         binding.progressBarMain.visibility = View.GONE
+
+        if (product.consumed) {
+            binding.buttonConsumeProduct.visibility = View.GONE
+            binding.linearLayoutConsumeProduct.visibility = View.VISIBLE
+            product.consumed_at?.let { consumed_at ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    binding.textViewConsumedAt.text =
+                        DateFormat.getDateFormat(context)
+                            .format(Date.from(consumed_at.toJavaInstant()))
+                } else {
+                    //TODO: format Instant date for API < 26
+                    binding.textViewConsumedAt.text = consumed_at.toString()
+                }
+            }
+        } else {
+            binding.buttonConsumeProduct.visibility = View.VISIBLE
+            binding.linearLayoutConsumeProduct.visibility = View.GONE
+
+            binding.buttonConsumeProduct.setOnClickListener {
+                viewModel.onEvent(ProductAddEvent.Consume)
+            }
+        }
+
 
     }
 }
