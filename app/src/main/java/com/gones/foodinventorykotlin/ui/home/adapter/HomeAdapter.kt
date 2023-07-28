@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.databinding.ItemProductBinding
 import com.gones.foodinventorykotlin.domain.entity.Product
-import timber.log.Timber
 import java.util.Date
 
 class HomeAdapter :
@@ -33,7 +32,6 @@ class HomeAdapter :
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val binding = ItemProductBinding.bind(holder.itemView)
         val product = getItem(position)
-        Timber.d("DLOG: ${product.productName}")
 
         holder.itemView.apply {
             Glide.with(this).load(product.imageUrl).into(binding.imageViewProduct)
@@ -41,9 +39,12 @@ class HomeAdapter :
             binding.productName.text = product.productName
 
             val dateFormat = DateFormat.getDateFormat(context)
-            val date = Date(product.expiry_date)
 
-            binding.productDate.text = dateFormat.format(date)
+            product.expiry_date?.let {
+                binding.productDate.text = dateFormat.format(Date(it))
+            } ?: run {
+                binding.productDate.text = context.getString(R.string.no_expiry_date)
+            }
 
             setOnClickListener {
                 onItemClickListener?.let { it(product) }

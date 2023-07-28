@@ -12,7 +12,12 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_to_scan"
-            app:destination="@id/scanFragment" />
+            app:destination="@id/scanFragment"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_home_to_product"
+            app:destination="@id/productFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
 
     <fragment
@@ -32,23 +37,16 @@
         android:name="com.gones.foodinventorykotlin.ui.product.fragment.ProductFragment"
         android:label="ProductFragment"
         tools:layout="@layout/fragment_product">
-
         <argument
             android:name="barcode"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="false" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/updateProductFragment"
-        android:name="com.gones.foodinventorykotlin.ui.updateProduct.fragment.UpdateProductFragment"
-        android:label="UpdateProductFragment"
-        tools:layout="@layout/fragment_update_product">
+            app:nullable="true" />
         <argument
             android:name="id"
-            app:argType="integer"
-            app:nullable="false" />
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
 </navigation>

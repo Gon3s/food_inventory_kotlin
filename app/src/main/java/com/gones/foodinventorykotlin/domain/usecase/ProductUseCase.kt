@@ -5,6 +5,7 @@ import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.datetime.Clock
 
 class ProductUseCase(
     private val productRepository: ProductRepository,
@@ -14,7 +15,7 @@ class ProductUseCase(
     }
 
     suspend fun addProduct(product: Product, quantity: Int) {
-        if (product.productName.isBlank()) {
+        if (product.productName?.isBlank() == true) {
             throw InvalidProductException("The name of the product can't be empty.")
         }
         if (quantity < 1) {
@@ -25,9 +26,22 @@ class ProductUseCase(
         }
     }
 
+    suspend fun updateProduct(product: Product) {
+        if (product.productName?.isBlank() == true) {
+            throw InvalidProductException("The name of the product can't be empty.")
+        }
+        productRepository.updateProduct(product)
+    }
+
     suspend fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
     suspend fun getProductByEan(barcode: String): Flow<List<Product>> =
         productRepository.getProductsByEan(barcode)
 
     suspend fun getProductById(id: Int): Flow<Product> = productRepository.getProductById(id)
+
+    suspend fun consumedProduct(product: Product) {
+        product.consumed = true
+        product.consumed_at = Clock.System.now()
+        productRepository.updateProduct(product)
+    }
 }

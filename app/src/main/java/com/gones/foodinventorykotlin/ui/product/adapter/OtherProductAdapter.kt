@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.databinding.ItemOtherProductBinding
 import com.gones.foodinventorykotlin.domain.entity.Product
-import timber.log.Timber
 import java.util.Date
 
 class OtherProductAdapter :
@@ -30,15 +29,15 @@ class OtherProductAdapter :
     override fun onBindViewHolder(holder: OtherProductViewHolder, position: Int) {
         val binding = ItemOtherProductBinding.bind(holder.itemView)
         val product = getItem(position)
-        Timber.d("DLOG: ${product.productName}")
 
         holder.itemView.apply {
             binding.productName.text = product.productName
 
-            val dateFormat = DateFormat.getDateFormat(context)
-            val date = Date(product.expiry_date)
-
-            binding.productDate.text = dateFormat.format(date)
+            product.expiry_date?.let {
+                binding.productDate.text = DateFormat.getDateFormat(context).format(Date(it))
+            } ?: run {
+                binding.productDate.text = context.getString(R.string.no_expiry_date)
+            }
         }
     }
 

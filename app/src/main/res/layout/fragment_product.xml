@@ -16,7 +16,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:orientation="vertical">
 
             <FrameLayout
@@ -61,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/imageViewProduct"
@@ -106,9 +105,11 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
+                        android:id="@+id/linearLayoutQuantity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginBottom="16dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -168,7 +169,7 @@
                         android:id="@+id/productDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:layout_weight="1"
                         android:hint="Date de péremption">
 
@@ -185,6 +186,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayoutOtherProducts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -197,7 +199,7 @@
                 android:textSize="18sp" />
 
             <FrameLayout
-                android:id="@+id/linearLayoutOtherProducts"
+                android:id="@+id/frameLayoutOtherProducts"
                 android:layout_width="match_parent"
                 android:layout_height="192dp"
                 android:layout_marginTop="8dp">
@@ -247,6 +249,40 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
         </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonConsumeProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Retirer"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/linearLayoutConsumeProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Consommé le : "
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/textViewConsumedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="DD/MM/YYYY" />
+            </LinearLayout>
+        </FrameLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

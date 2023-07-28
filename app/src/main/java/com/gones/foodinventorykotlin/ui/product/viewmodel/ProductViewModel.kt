@@ -20,8 +20,13 @@ import timber.log.Timber
 
 class ProductViewModel(
     private val productUseCase: ProductUseCase,
-    private val barcode: String,
+    private val barcode: String? = null,
+    private val id: String? = null,
 ) : ViewModel() {
+
+    enum class TYPES {
+        CREATE, UPDATE
+    }
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -34,21 +39,36 @@ class ProductViewModel(
 
     private lateinit var productToUpdate: Product
     private var quantity: Int = 1
+    var type: TYPES = (id?.let { TYPES.UPDATE } ?: TYPES.CREATE)
 
     fun getProduct() {
+        Timber.d("DLOG: getProduct - barcode: $barcode, id: $id")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                productUseCase.getProductByEanWS(barcode).catch { e ->
-                    _product.value = (Resource.failure(e))
-                }.collect { product ->
-                    _product.value = (Resource.success(product))
-                    productToUpdate = product
+                barcode?.let {
+                    Timber.d("DLOG: getProductByEanWS: $barcode")
+                    productUseCase.getProductByEanWS(barcode).catch { e ->
+                        _product.value = (Resource.failure(e))
+                    }.collect { product ->
+                        _product.value = (Resource.success(product))
+                        productToUpdate = product
+                    }
+
+                    productUseCase.getProductByEan(barcode).catch { e ->
+                        _product.value = (Resource.failure(e))
+                    }.collect { products ->
+                        _products.value = (Resource.success(products))
+                    }
                 }
 
-                productUseCase.getProductByEan(barcode).catch { e ->
-                    _product.value = (Resource.failure(e))
-                }.collect { products ->
-                    _products.value = (Resource.success(products))
+                id?.let {
+                    Timber.d("DLOG: getProductById: $id")
+                    productUseCase.getProductById(id.toInt()).catch { e ->
+                        _product.value = (Resource.failure(e))
+                    }.collect { product ->
+                        _product.value = (Resource.success(product))
+                        productToUpdate = product
+                    }
                 }
             }
         }
@@ -69,18 +89,41 @@ class ProductViewModel(
             }
 
             is ProductAddEvent.EnteredExpiryDate -> {
-                Timber.d("DLOG: EnteredExpiryDate: ${event.expiryDate}")
                 productToUpdate.expiry_date = event.expiryDate
+            }
+
+            is ProductAddEvent.Consume -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    productUseCase.consumedProduct(productToUpdate)
+
+                    _eventFlow.emit(UiEvent.ProductUpdated)
+                }
             }
 
             is ProductAddEvent.SaveProduct -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        productUseCase.addProduct(
-                            productToUpdate,
-                            quantity
-                        )
-                        _eventFlow.emit(UiEvent.SaveNote)
+                        when (type) {
+                            TYPES.CREATE -> {
+                                Timber.d("DLOG: addProduct - productToUpdate: $productToUpdate")
+                                productUseCase.addProduct(
+                                    productToUpdate,
+                                    quantity
+                                )
+
+                                _eventFlow.emit(UiEvent.ProductCreated)
+                            }
+
+                            TYPES.UPDATE -> {
+                                Timber.d("DLOG: updateProduct - productToUpdate: $productToUpdate")
+
+                                productUseCase.updateProduct(
+                                    productToUpdate
+                                )
+
+                                _eventFlow.emit(UiEvent.ProductUpdated)
+                            }
+                        }
                     } catch (e: InvalidProductException) {
                         Timber.e("DLOG: SaveProduct - InvalidProductException: ${e.message}")
                         _eventFlow.emit(
@@ -103,6 +146,7 @@ class ProductViewModel(
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
-        object SaveNote : UiEvent()
+        object ProductCreated : UiEvent()
+        object ProductUpdated : UiEvent()
     }
 }

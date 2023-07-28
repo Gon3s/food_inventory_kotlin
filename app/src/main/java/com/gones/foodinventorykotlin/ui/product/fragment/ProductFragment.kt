@@ -1,5 +1,6 @@
 package com.gones.foodinventorykotlin.ui.product.fragment
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -29,6 +30,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toJavaInstant
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -37,9 +39,9 @@ import java.util.Date
 class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBinding::inflate) {
     private val arguments: ProductFragmentArgs by navArgs()
     private val viewModel: ProductViewModel by viewModel {
-        parametersOf(arguments.barcode)
+        parametersOf(arguments.barcode, arguments.id)
     }
-    lateinit var otherProductAdapter: OtherProductAdapter
+    private lateinit var otherProductAdapter: OtherProductAdapter
 
     override fun FragmentProductBinding.initialize() {
         setHasOptionsMenu(true)
@@ -64,7 +66,11 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                                     .show()
                             }
 
-                            is ProductViewModel.UiEvent.SaveNote -> {
+                            is ProductViewModel.UiEvent.ProductCreated -> {
+                                mainNavController().navigateUp()
+                            }
+
+                            is ProductViewModel.UiEvent.ProductUpdated -> {
                                 mainNavController().navigateUp()
                             }
                         }
@@ -73,6 +79,8 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
                 launch {
                     viewModel.product.collect { productResource ->
+                        Timber.d("DLOG: product.collect: $productResource - ${viewModel.type}")
+
                         when (productResource) {
                             is Resource.Success -> {
                                 binding.linearLayoutMain.visibility = View.VISIBLE
@@ -96,6 +104,16 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                                 binding.linearLayoutWaiting.visibility = View.VISIBLE
                             }
                         }
+
+                        if (viewModel.type == ProductViewModel.TYPES.UPDATE) {
+                            binding.linearLayoutOtherProducts.visibility = View.GONE
+                            binding.linearLayoutQuantity.visibility = View.GONE
+                        } else {
+                            binding.linearLayoutOtherProducts.visibility = View.VISIBLE
+                            binding.linearLayoutQuantity.visibility = View.VISIBLE
+                            binding.buttonConsumeProduct.visibility = View.GONE
+                            binding.linearLayoutConsumeProduct.visibility = View.GONE
+                        }
                     }
                 }
 
@@ -103,23 +121,23 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                     viewModel.products.collect {
                         when (it) {
                             is Resource.Success -> {
-                                binding.linearLayoutOtherProducts.visibility = View.GONE
                                 binding.recyclerViewOtherProducts.visibility = View.VISIBLE
                                 binding.progressBarOtherProducts.visibility = View.GONE
                                 binding.textviewMainError.visibility = View.GONE
 
-                                Timber.d("DLOG: ${it.data}")
                                 if (it.data.isEmpty()) {
+                                    binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                     binding.textviewNoProduct.visibility = View.VISIBLE
                                 } else {
                                     otherProductAdapter.submitList(it.data)
 
+                                    binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                     binding.textviewNoProduct.visibility = View.GONE
                                 }
                             }
 
                             is Resource.Failure -> {
-                                binding.linearLayoutOtherProducts.visibility = View.VISIBLE
+                                binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                 binding.recyclerViewOtherProducts.visibility = View.GONE
                                 binding.progressBarOtherProducts.visibility = View.GONE
                                 binding.textviewNoProduct.visibility = View.GONE
@@ -128,7 +146,7 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                             }
 
                             is Resource.Progress -> {
-                                binding.linearLayoutOtherProducts.visibility = View.VISIBLE
+                                binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                 binding.recyclerViewOtherProducts.visibility = View.GONE
                                 binding.textviewError.visibility = View.GONE
                                 binding.textviewNoProduct.visibility = View.GONE
@@ -142,7 +160,14 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
         viewModel.getProduct()
 
-        (activity as MainActivity).supportActionBar?.title = "Ajouter un produit"
+        (activity as MainActivity).supportActionBar?.title =
+            (viewModel.type == ProductViewModel.TYPES.UPDATE).let {
+                if (it) {
+                    "Modifier un produit"
+                } else {
+                    "Ajouter un produit"
+                }
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -255,6 +280,29 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
         binding.textviewMainError.visibility = View.GONE
         binding.progressBarMain.visibility = View.GONE
+
+        if (product.consumed) {
+            binding.buttonConsumeProduct.visibility = View.GONE
+            binding.linearLayoutConsumeProduct.visibility = View.VISIBLE
+            product.consumed_at?.let { consumed_at ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    binding.textViewConsumedAt.text =
+                        DateFormat.getDateFormat(context)
+                            .format(Date.from(consumed_at.toJavaInstant()))
+                } else {
+                    //TODO: format Instant date for API < 26
+                    binding.textViewConsumedAt.text = consumed_at.toString()
+                }
+            }
+        } else {
+            binding.buttonConsumeProduct.visibility = View.VISIBLE
+            binding.linearLayoutConsumeProduct.visibility = View.GONE
+
+            binding.buttonConsumeProduct.setOnClickListener {
+                viewModel.onEvent(ProductAddEvent.Consume)
+            }
+        }
+
 
     }
 }
