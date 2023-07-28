@@ -7,12 +7,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Product(
     val id: Int = 0,
-    val barcode: String,
-    var brands: String,
-    var categories: String,
-    val imageUrl: String,
-    var productName: String,
-    var expiry_date: Long = 0L,
+    val barcode: String? = null,
+    var brands: String? = null,
+    var categories: String? = null,
+    val imageUrl: String? = null,
+    var productName: String? = null,
+    var expiry_date: Long? = null,
     @Serializable(with = InstantIso8601Serializer::class)
     var created_at: Instant? = null,
     var consumed: Boolean = false,

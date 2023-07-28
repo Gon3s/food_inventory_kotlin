@@ -41,7 +41,7 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
     private val viewModel: ProductViewModel by viewModel {
         parametersOf(arguments.barcode, arguments.id)
     }
-    lateinit var otherProductAdapter: OtherProductAdapter
+    private lateinit var otherProductAdapter: OtherProductAdapter
 
     override fun FragmentProductBinding.initialize() {
         setHasOptionsMenu(true)
@@ -79,17 +79,7 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
                 launch {
                     viewModel.product.collect { productResource ->
-                        Timber.d("DLOG: product.collect: $productResource")
-
-                        if (viewModel.type == ProductViewModel.TYPES.UPDATE) {
-                            binding.linearLayoutOtherProducts.visibility = View.GONE
-                            binding.linearLayoutQuantity.visibility = View.GONE
-                        } else {
-                            binding.linearLayoutOtherProducts.visibility = View.VISIBLE
-                            binding.linearLayoutQuantity.visibility = View.VISIBLE
-                            binding.buttonConsumeProduct.visibility = View.GONE
-                            binding.linearLayoutConsumeProduct.visibility = View.GONE
-                        }
+                        Timber.d("DLOG: product.collect: $productResource - ${viewModel.type}")
 
                         when (productResource) {
                             is Resource.Success -> {
@@ -114,6 +104,16 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                                 binding.linearLayoutWaiting.visibility = View.VISIBLE
                             }
                         }
+
+                        if (viewModel.type == ProductViewModel.TYPES.UPDATE) {
+                            binding.linearLayoutOtherProducts.visibility = View.GONE
+                            binding.linearLayoutQuantity.visibility = View.GONE
+                        } else {
+                            binding.linearLayoutOtherProducts.visibility = View.VISIBLE
+                            binding.linearLayoutQuantity.visibility = View.VISIBLE
+                            binding.buttonConsumeProduct.visibility = View.GONE
+                            binding.linearLayoutConsumeProduct.visibility = View.GONE
+                        }
                     }
                 }
 
@@ -121,16 +121,17 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
                     viewModel.products.collect {
                         when (it) {
                             is Resource.Success -> {
-                                binding.frameLayoutOtherProducts.visibility = View.GONE
                                 binding.recyclerViewOtherProducts.visibility = View.VISIBLE
                                 binding.progressBarOtherProducts.visibility = View.GONE
                                 binding.textviewMainError.visibility = View.GONE
 
                                 if (it.data.isEmpty()) {
+                                    binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                     binding.textviewNoProduct.visibility = View.VISIBLE
                                 } else {
                                     otherProductAdapter.submitList(it.data)
 
+                                    binding.frameLayoutOtherProducts.visibility = View.VISIBLE
                                     binding.textviewNoProduct.visibility = View.GONE
                                 }
                             }

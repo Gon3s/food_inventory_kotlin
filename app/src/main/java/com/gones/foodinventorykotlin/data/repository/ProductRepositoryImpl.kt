@@ -6,6 +6,7 @@ import com.gones.foodinventorykotlin.domain.entity.ProductResult
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.postgrest.query.PostgrestResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +25,11 @@ class ProductRepositoryImpl(
 
     override suspend fun getProducts(): Flow<List<Product>> = flow {
         val products = withContext(Dispatchers.IO) {
-            supabaseClient.postgrest["product"].select().decodeList<Product>()
+            supabaseClient.postgrest["product"].select {
+                Product::consumed eq false
+                order(Product::expiry_date.name, Order.DESCENDING)
+            }
+                .decodeList<Product>()
         }
         emit(products)
     }

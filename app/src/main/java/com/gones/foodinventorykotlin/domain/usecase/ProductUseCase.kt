@@ -15,7 +15,7 @@ class ProductUseCase(
     }
 
     suspend fun addProduct(product: Product, quantity: Int) {
-        if (product.productName.isBlank()) {
+        if (product.productName?.isBlank() == true) {
             throw InvalidProductException("The name of the product can't be empty.")
         }
         if (quantity < 1) {
@@ -27,7 +27,7 @@ class ProductUseCase(
     }
 
     suspend fun updateProduct(product: Product) {
-        if (product.productName.isBlank()) {
+        if (product.productName?.isBlank() == true) {
             throw InvalidProductException("The name of the product can't be empty.")
         }
         productRepository.updateProduct(product)
