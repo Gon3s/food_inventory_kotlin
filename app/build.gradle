@@ -75,7 +75,7 @@ dependencies {
     def retrofit_version = "2.9.0"
     def logging_interceptor_version = '5.0.0-alpha.11'
     def navigation_version = '2.6.0'
-    def supabase_version = '1.2.0-alpha-3'
+    def supabase_version = '1.2.0'
 
     /* Navigation */
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
