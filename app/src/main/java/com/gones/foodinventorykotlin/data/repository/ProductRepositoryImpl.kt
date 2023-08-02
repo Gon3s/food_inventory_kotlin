@@ -23,7 +23,7 @@ class ProductRepositoryImpl(
         return productResultResponse.toModel()
     }
 
-    override suspend fun getProducts(): Flow<List<Product>> = flow {
+    override fun getProducts(): Flow<List<Product>> = flow {
         val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 Product::consumed eq false

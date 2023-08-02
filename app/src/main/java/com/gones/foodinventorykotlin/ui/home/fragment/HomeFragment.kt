@@ -1,27 +1,27 @@
 package com.gones.foodinventorykotlin.ui.home.fragment
 
-import android.os.Bundle
-import android.view.View
-import androidx.lifecycle.coroutineScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.gones.foodinventorykotlin.databinding.FragmentHomeBinding
-import com.gones.foodinventorykotlin.ui.common.extension.BaseFragment
-import com.gones.foodinventorykotlin.ui.common.extension.mainNavController
-import com.gones.foodinventorykotlin.ui.home.adapter.HomeAdapter
-import com.gones.foodinventorykotlin.ui.home.viewmodel.HomeViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
-
-class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
+/*class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val viewModel: HomeViewModel by viewModel {
         parametersOf()
     }
     private lateinit var homeAdapter: HomeAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        val binding = DataBindingUtil.inflate<FragmentHomeBinding>(
+            inflater,
+            R.layout.fragment_home,
+            container,
+            false
+        )
+
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,4 +52,4 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }
     }
-}
+}*/

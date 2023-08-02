@@ -22,7 +22,6 @@ import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.resource.Resource
 import com.gones.foodinventorykotlin.ui.common.extension.BaseFragment
 import com.gones.foodinventorykotlin.ui.common.extension.mainNavController
-import com.gones.foodinventorykotlin.ui.main.MainActivity
 import com.gones.foodinventorykotlin.ui.product.adapter.OtherProductAdapter
 import com.gones.foodinventorykotlin.ui.product.event.ProductAddEvent
 import com.gones.foodinventorykotlin.ui.product.viewmodel.ProductViewModel
@@ -160,14 +159,14 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
         viewModel.getProduct()
 
-        (activity as MainActivity).supportActionBar?.title =
+        /*(activity as MainActivity).supportActionBar?.title =
             (viewModel.type == ProductViewModel.TYPES.UPDATE).let {
                 if (it) {
                     "Modifier un produit"
                 } else {
                     "Ajouter un produit"
                 }
-            }
+            }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

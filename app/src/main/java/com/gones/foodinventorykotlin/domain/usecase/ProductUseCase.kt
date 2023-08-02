@@ -33,7 +33,7 @@ class ProductUseCase(
         productRepository.updateProduct(product)
     }
 
-    suspend fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
+    fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
     suspend fun getProductByEan(barcode: String): Flow<List<Product>> =
         productRepository.getProductsByEan(barcode)
 

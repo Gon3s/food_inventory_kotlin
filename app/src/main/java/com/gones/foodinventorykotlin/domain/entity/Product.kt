@@ -11,7 +11,7 @@ data class Product(
     var brands: String? = null,
     var categories: String? = null,
     val imageUrl: String? = null,
-    var productName: String? = null,
+    var productName: String,
     var expiry_date: Long? = null,
     @Serializable(with = InstantIso8601Serializer::class)
     var created_at: Instant? = null,

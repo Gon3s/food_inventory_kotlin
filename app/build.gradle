@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.22'
 }
 
 
@@ -22,7 +22,7 @@ android {
 
         Properties secretProperties = new Properties()
         secretProperties.load(project.rootProject.file('secrets.properties').newDataInputStream())
-        
+
         buildConfigField "String", 'BASE_URL', "\"https://fr.openfoodfacts.org/api/v0/\""
         buildConfigField "String", 'SUPABASE_URL', "\"${secretProperties.getProperty('SUPABASE_URL')}\""
         buildConfigField "String", 'SUPABASE_KEY', "\"${secretProperties.getProperty('SUPABASE_KEY')}\""
@@ -45,6 +45,10 @@ android {
     }
     buildFeatures {
         viewBinding true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.8'
     }
     namespace 'com.gones.foodinventorykotlin'
 }
@@ -54,13 +58,13 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.exifinterface:exifinterface:1.3.6'
-    implementation 'androidx.fragment:fragment-ktx:1.6.0'
+    implementation 'androidx.fragment:fragment-ktx:1.6.1'
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation 'androidx.recyclerview:recyclerview:1.3.0'
+    implementation 'androidx.recyclerview:recyclerview:1.3.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.0'
@@ -69,6 +73,28 @@ dependencies {
     implementation 'io.ktor:ktor-client-android:2.3.2'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 
+    // Compose
+    def composeBom = platform('androidx.compose:compose-bom:2023.01.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    implementation 'androidx.compose.material3:material3'
+
+    // Android Studio Preview support
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    implementation 'androidx.compose.material:material-icons-core'
+
+    // Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+
+    // Integration with activities
+    implementation 'androidx.activity:activity-compose:1.7.2'
+
+    // UI Tests
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     // Version
     def koin_version = '3.4.3'
@@ -76,14 +102,18 @@ dependencies {
     def logging_interceptor_version = '5.0.0-alpha.11'
     def navigation_version = '2.6.0'
     def supabase_version = '1.2.0'
+    def nav_version = "2.5.3"
+    def coil_version = "2.4.0"
 
     /* Navigation */
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
 
     /* Koin */
     implementation "io.insert-koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 
     /* Retrofit */
     implementation "com.squareup.okhttp3:logging-interceptor:$logging_interceptor_version"
@@ -108,6 +138,9 @@ dependencies {
 
     /* Supabase */
     implementation("io.github.jan-tennert.supabase:postgrest-kt:$supabase_version")
+
+    /* Coil */
+    implementation("io.coil-kt:coil-compose:$coil_version")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
