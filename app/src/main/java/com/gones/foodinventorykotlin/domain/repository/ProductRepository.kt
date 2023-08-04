@@ -8,8 +8,8 @@ interface ProductRepository {
     suspend fun getProductByEanWS(barcode: String): ProductResult
     fun getProducts(): Flow<List<Product>>
     suspend fun insertProduct(product: Product)
-    suspend fun getProductsByEan(barcode: String): Flow<List<Product>>
-    suspend fun getProductById(id: Int): Flow<Product>
+    fun getProductsByEan(barcode: String): Flow<List<Product>>
+    fun getProductById(id: Int): Flow<Product>
     suspend fun updateProduct(product: Product)
     suspend fun deleteProduct(product: Product)
 }

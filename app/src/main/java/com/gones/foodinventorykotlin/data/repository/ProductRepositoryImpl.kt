@@ -38,7 +38,7 @@ class ProductRepositoryImpl(
         supabaseClient.postgrest["product"].insert(product)
     }
 
-    override suspend fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
+    override fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
         val product = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 eq("barcode", barcode)
@@ -47,7 +47,7 @@ class ProductRepositoryImpl(
         emit(product)
     }
 
-    override suspend fun getProductById(id: Int): Flow<Product> = flow {
+    override fun getProductById(id: Int): Flow<Product> = flow {
         val product = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select() {
                 eq("id", id)

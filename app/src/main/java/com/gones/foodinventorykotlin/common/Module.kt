@@ -7,7 +7,7 @@ import com.gones.foodinventorykotlin.data.repository.ProductRepositoryImpl
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import com.gones.foodinventorykotlin.ui.home.HomeViewModel
-import com.gones.foodinventorykotlin.ui.product.viewmodel.ProductViewModel
+import com.gones.foodinventorykotlin.ui.product.ProductViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module

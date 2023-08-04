@@ -34,10 +34,10 @@ class ProductUseCase(
     }
 
     fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
-    suspend fun getProductByEan(barcode: String): Flow<List<Product>> =
+    fun getProductByEan(barcode: String): Flow<List<Product>> =
         productRepository.getProductsByEan(barcode)
 
-    suspend fun getProductById(id: Int): Flow<Product> = productRepository.getProductById(id)
+    fun getProductById(id: Int): Flow<Product> = productRepository.getProductById(id)
 
     suspend fun consumedProduct(product: Product) {
         product.consumed = true

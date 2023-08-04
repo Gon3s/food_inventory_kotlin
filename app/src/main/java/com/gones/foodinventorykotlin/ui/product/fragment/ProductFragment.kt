@@ -1,41 +1,6 @@
 package com.gones.foodinventorykotlin.ui.product.fragment
 
-import android.os.Build
-import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.text.format.DateFormat
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.gones.foodinventorykotlin.R
-import com.gones.foodinventorykotlin.databinding.FragmentProductBinding
-import com.gones.foodinventorykotlin.domain.entity.Product
-import com.gones.foodinventorykotlin.domain.resource.Resource
-import com.gones.foodinventorykotlin.ui.common.extension.BaseFragment
-import com.gones.foodinventorykotlin.ui.common.extension.mainNavController
-import com.gones.foodinventorykotlin.ui.product.adapter.OtherProductAdapter
-import com.gones.foodinventorykotlin.ui.product.event.ProductAddEvent
-import com.gones.foodinventorykotlin.ui.product.viewmodel.ProductViewModel
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.datetime.toJavaInstant
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-import timber.log.Timber
-import java.util.Date
-
-class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBinding::inflate) {
+/*class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBinding::inflate) {
     private val arguments: ProductFragmentArgs by navArgs()
     private val viewModel: ProductViewModel by viewModel {
         parametersOf(arguments.barcode, arguments.id)
@@ -305,3 +270,4 @@ class ProductFragment : BaseFragment<FragmentProductBinding>(FragmentProductBind
 
     }
 }
+*/

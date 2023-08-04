@@ -1,16 +1,22 @@
-package com.gones.foodinventorykotlin.ui.main
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
+package com.gones.foodinventorykotlin.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.gones.foodinventorykotlin.ui.home.HomeScreen
+import com.gones.foodinventorykotlin.ui.product.ProductScreen
 import com.gones.foodinventorykotlin.ui.theme.FoodInventoryTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +37,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "home") {
@@ -40,8 +47,25 @@ fun MainNavHost(navController: NavHostController) {
         composable("scan") {
             // ScanScreen()
         }
-        composable("product") {
-            // ProductScreen()
+        composable(
+            "product?barcode={barcode}&id={id}", arguments = listOf(
+                navArgument("barcode") {
+                    type = NavType.StringType
+                    defaultValue = null
+                    nullable = true
+                },
+                navArgument("id") {
+                    type = NavType.StringType
+                    defaultValue = null
+                    nullable = true
+                },
+            )
+        ) {
+            ProductScreen(
+                navController = navController,
+                barcode = it.arguments?.getString("barcode"),
+                id = it.arguments?.getString("id")
+            )
         }
     }
 }

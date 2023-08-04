@@ -1,16 +1,7 @@
 package com.gones.foodinventorykotlin.ui.scan.fragment
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.View
-import android.widget.Toast
-import com.gones.foodinventorykotlin.databinding.FragmentScanBinding
-import com.gones.foodinventorykotlin.ui.common.extension.BaseFragment
-import com.gones.foodinventorykotlin.ui.common.extension.mainNavController
-import com.google.zxing.integration.android.IntentIntegrator
 
-
-class ScanFragment : BaseFragment<FragmentScanBinding>(FragmentScanBinding::inflate) {
+/*class ScanFragment : BaseFragment<FragmentScanBinding>(FragmentScanBinding::inflate) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         IntentIntegrator.forSupportFragment(this).setOrientationLocked(true).setBeepEnabled(false)
@@ -29,4 +20,4 @@ class ScanFragment : BaseFragment<FragmentScanBinding>(FragmentScanBinding::infl
             }
         }
     }
-}
+}*/

@@ -1,21 +1,21 @@
-package com.gones.foodinventorykotlin.ui.product.viewmodel;
+package com.gones.foodinventorykotlin.ui.product;
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gones.foodinventorykotlin.domain.entity.InvalidProductException
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.resource.Resource
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
-import com.gones.foodinventorykotlin.ui.product.event.ProductAddEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class ProductViewModel(
@@ -23,54 +23,47 @@ class ProductViewModel(
     private val barcode: String? = null,
     private val id: String? = null,
 ) : ViewModel() {
-
     enum class TYPES {
         CREATE, UPDATE
     }
 
+    private lateinit var productToUpdate: Product
+
+    private val _state = mutableStateOf(ProductState())
+    val state: State<ProductState> = _state
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private val _product = MutableStateFlow<Resource<Product>>(Resource.Progress())
-    val product: StateFlow<Resource<Product>> = _product
+    init {
+        getProduct()
+    }
 
-    private val _products = MutableStateFlow<Resource<List<Product>>>(Resource.Progress())
-    val products: StateFlow<Resource<List<Product>>> = _products
+    private fun getProduct() {
+        barcode?.let {
+            _state.value = _state.value.copy(type = TYPES.CREATE)
 
-    private lateinit var productToUpdate: Product
-    private var quantity: Int = 1
-    var type: TYPES = (id?.let { TYPES.UPDATE } ?: TYPES.CREATE)
+            productUseCase.getProductByEanWS(barcode).catch { e ->
+                _state.value = _state.value.copy(product = Resource.failure(e))
+            }.onEach { product ->
+                _state.value = _state.value.copy(product = Resource.success(product))
+            }.launchIn(viewModelScope)
 
-    fun getProduct() {
-        Timber.d("DLOG: getProduct - barcode: $barcode, id: $id")
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                barcode?.let {
-                    Timber.d("DLOG: getProductByEanWS: $barcode")
-                    productUseCase.getProductByEanWS(barcode).catch { e ->
-                        _product.value = (Resource.failure(e))
-                    }.collect { product ->
-                        _product.value = (Resource.success(product))
-                        productToUpdate = product
-                    }
+            productUseCase.getProductByEan(barcode).catch { e ->
+                _state.value = _state.value.copy(products = Resource.failure(e))
+            }.onEach { products ->
+                _state.value = _state.value.copy(products = Resource.success(products))
+            }.launchIn(viewModelScope)
+        }
 
-                    productUseCase.getProductByEan(barcode).catch { e ->
-                        _product.value = (Resource.failure(e))
-                    }.collect { products ->
-                        _products.value = (Resource.success(products))
-                    }
-                }
+        id?.let {
+            _state.value = _state.value.copy(type = TYPES.UPDATE)
 
-                id?.let {
-                    Timber.d("DLOG: getProductById: $id")
-                    productUseCase.getProductById(id.toInt()).catch { e ->
-                        _product.value = (Resource.failure(e))
-                    }.collect { product ->
-                        _product.value = (Resource.success(product))
-                        productToUpdate = product
-                    }
-                }
-            }
+            productUseCase.getProductById(id.toInt()).catch { e ->
+                _state.value = _state.value.copy(product = Resource.failure(e))
+            }.onEach { product ->
+                _state.value = _state.value.copy(product = Resource.success(product))
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -85,7 +78,16 @@ class ProductViewModel(
             }
 
             is ProductAddEvent.EnteredQuantity -> {
-                quantity = event.quantity
+                _state.value = _state.value.copy(quantity = event.quantity)
+            }
+
+            is ProductAddEvent.DecreaseQuantity -> {
+                if (state.value.quantity < 1) return
+                _state.value = state.value.copy(quantity = state.value.quantity - 1)
+            }
+
+            is ProductAddEvent.IncreaseQuantity -> {
+                _state.value = state.value.copy(quantity = state.value.quantity + 1)
             }
 
             is ProductAddEvent.EnteredExpiryDate -> {
@@ -103,12 +105,12 @@ class ProductViewModel(
             is ProductAddEvent.SaveProduct -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        when (type) {
+                        when (_state.value.type) {
                             TYPES.CREATE -> {
                                 Timber.d("DLOG: addProduct - productToUpdate: $productToUpdate")
                                 productUseCase.addProduct(
                                     productToUpdate,
-                                    quantity
+                                    _state.value.quantity
                                 )
 
                                 _eventFlow.emit(UiEvent.ProductCreated)

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Food Inventory Kotlin</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_expiry_date">Pas de date d\'expiration</string>
+    <string name="productName">Nom du produit</string>
+    <string name="brands">Marque du produit</string>
+    <string name="productQuantity">Quantité du produit</string>
+    <string name="expirationDate">Date de péremption</string>
+    <string name="consumedAt">Consommé le : %s</string>
+    <string name="retire">Retirer</string>
 </resources>
