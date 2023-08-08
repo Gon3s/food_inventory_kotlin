@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gones.foodinventorykotlin.ui.home.HomeScreen
 import com.gones.foodinventorykotlin.ui.product.ProductScreen
+import com.gones.foodinventorykotlin.ui.scan.ScanScreen
 import com.gones.foodinventorykotlin.ui.theme.FoodInventoryTheme
 
 class MainActivity : ComponentActivity() {
@@ -45,7 +46,7 @@ fun MainNavHost(navController: NavHostController) {
             HomeScreen(navController = navController)
         }
         composable("scan") {
-            // ScanScreen()
+            ScanScreen(navController = navController)
         }
         composable(
             "product?barcode={barcode}&id={id}", arguments = listOf(
