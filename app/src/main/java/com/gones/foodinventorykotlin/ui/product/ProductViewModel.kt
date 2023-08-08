@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.product;
+package com.gones.foodinventorykotlin.ui.product
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
