@@ -7,4 +7,5 @@
     <string name="expirationDate">Date de péremption</string>
     <string name="consumedAt">Consommé le : %s</string>
     <string name="retire">Retirer</string>
+    <string name="add_without_barcode">Ajouter sans code barre</string>
 </resources>
