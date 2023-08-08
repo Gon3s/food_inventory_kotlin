@@ -11,13 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -28,46 +24,51 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.domain.entity.Product
+import com.gones.foodinventorykotlin.ui.common.AppBarState
+import com.gones.foodinventorykotlin.ui.common.ScanRoute
+import com.gones.foodinventorykotlin.ui.common.Screen
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.util.Date
 
 @Composable
 fun HomeScreen(
+    appBarState: AppBarState,
     navController: NavController,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state = viewModel.state.value
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate("scan")
+    val screen = appBarState.currentScreen as? Screen.Home
+    LaunchedEffect(key1 = screen) {
+        screen?.actions?.onEach { action ->
+            Timber.d("DLOG: HomeScreen : ScanIcon : action : $action")
+            when (action) {
+                Screen.Home.FloationActionIcons.ScanIcon -> {
+                    navController.navigate(ScanRoute)
                 }
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Scan product")
             }
-        }
-    ) { padding ->
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            items(state.products.size) { index ->
-                val product = state.products[index]
-                ProductItem(
-                    product = product,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            Timber.d("DLOG : ProductScreen : ProductItem : product : $product")
-                            navController.navigate("product?id=${product.id}")
-                        }
-                )
-            }
+        }?.launchIn(this)
+    }
+
+    LazyColumn(
+        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        items(state.products.size) { index ->
+            val product = state.products[index]
+            ProductItem(
+                product = product,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        Timber.d("DLOG : ProductScreen : ProductItem : product : $product")
+                        navController.navigate("product?id=${product.id}")
+                    }
+            )
         }
     }
 }

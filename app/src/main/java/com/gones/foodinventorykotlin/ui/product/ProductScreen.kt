@@ -30,11 +30,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.domain.resource.Resource
+import com.gones.foodinventorykotlin.ui.common.AppBarState
+import com.gones.foodinventorykotlin.ui.common.Screen
 import com.gones.foodinventorykotlin.ui.home.ProductItem
 import com.gones.foodinventorykotlin.ui.product.component.DatePickerCustom
 import com.gones.foodinventorykotlin.ui.product.component.OutlineTextFieldCustom
 import com.gones.foodinventorykotlin.ui.product.component.QuantityComponent
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -45,6 +49,7 @@ import java.util.Locale
 @ExperimentalMaterial3Api
 @Composable
 fun ProductScreen(
+    appBarState: AppBarState,
     barcode: String? = null,
     id: String? = null,
     navController: NavController,
@@ -78,6 +83,17 @@ fun ProductScreen(
                 }
             }
         }
+    }
+
+    val screen = appBarState.currentScreen as? Screen.Product
+    LaunchedEffect(key1 = screen) {
+        screen?.actions?.onEach { action ->
+            when (action) {
+                Screen.Product.AppBarIcons.NavigationIcon -> {
+                    navController.popBackStack()
+                }
+            }
+        }?.launchIn(this)
     }
 
     Scaffold(

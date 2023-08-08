@@ -9,10 +9,12 @@ import com.google.zxing.DecodeHintType
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
+import timber.log.Timber
 import java.nio.ByteBuffer
+import java.util.concurrent.TimeUnit
 
-class QrCodeAnalyzer(
-    private val onQrCodeScanned: (String) -> Unit,
+class BarCodeAnalyzer(
+    private val onBarCodeScanned: (String) -> Unit,
 ) : ImageAnalysis.Analyzer {
 
     private val supportedImageFormats = listOf(
@@ -21,7 +23,15 @@ class QrCodeAnalyzer(
         ImageFormat.YUV_444_888,
     )
 
+    private var lastAnalyzedTimestamp = 0L
+
     override fun analyze(image: ImageProxy) {
+        val currentTimestamp = System.currentTimeMillis()
+        if (currentTimestamp - lastAnalyzedTimestamp < TimeUnit.SECONDS.toMillis(1)) {
+            image.close()
+            return
+        }
+
         if (image.format in supportedImageFormats) {
             val bytes = image.planes.first().buffer.toByteArray()
             val source = PlanarYUVLuminanceSource(
@@ -41,15 +51,19 @@ class QrCodeAnalyzer(
                         mapOf(
                             DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
                                 BarcodeFormat.EAN_13,
-                                BarcodeFormat.EAN_8
+                                BarcodeFormat.EAN_8,
+                                BarcodeFormat.UPC_A,
+                                BarcodeFormat.UPC_E,
                             )
                         )
                     )
                 }.decode(binaryBmp)
-                onQrCodeScanned(result.text)
+                onBarCodeScanned(result.text)
             } catch (e: Exception) {
+                Timber.e("DLOG: QrCodeAnalyzer: analyze: Exception: ${e.message}")
                 e.printStackTrace()
             } finally {
+                lastAnalyzedTimestamp = currentTimestamp
                 image.close()
             }
         }

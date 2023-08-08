@@ -39,11 +39,16 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.R
+import com.gones.foodinventorykotlin.ui.common.AppBarState
+import com.gones.foodinventorykotlin.ui.common.Screen
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 @ExperimentalMaterial3Api
 @Composable
 fun ScanScreen(
+    appBarState: AppBarState,
     navController: NavController,
 ) {
     val context = LocalContext.current
@@ -67,6 +72,16 @@ fun ScanScreen(
     )
     LaunchedEffect(key1 = true) {
         launcher.launch(Manifest.permission.CAMERA)
+    }
+    val screen = appBarState.currentScreen as? Screen.Scan
+    LaunchedEffect(key1 = screen) {
+        screen?.actions?.onEach { action ->
+            when (action) {
+                Screen.Scan.AppBarIcons.NavigationIcon -> {
+                    navController.popBackStack()
+                }
+            }
+        }?.launchIn(this)
     }
     Column(
         modifier = Modifier.fillMaxSize()
@@ -95,7 +110,8 @@ fun ScanScreen(
                             .build()
                         imageAnalysis.setAnalyzer(
                             ContextCompat.getMainExecutor(context),
-                            QrCodeAnalyzer { result ->
+                            BarCodeAnalyzer { result ->
+                                Timber.d("DLOG : ScanScreen : scan $result")
                                 navController.navigate("product?barcode=$result")
                             }
                         )
