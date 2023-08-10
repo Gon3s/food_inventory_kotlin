@@ -4,6 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gones.foodinventorykotlin.R
+import com.gones.foodinventorykotlin.common.UiText
 import com.gones.foodinventorykotlin.domain.entity.InvalidProductException
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +17,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import timber.log.Timber
 
 class ProductViewModel(
     private val productUseCase: ProductUseCase,
@@ -49,28 +50,30 @@ class ProductViewModel(
             productUseCase.getProductByEanWS(barcode).catch { e ->
                 _state.value = _state.value.copy(
                     hasError = true,
-                    errorMessage = e.message ?: "An error occurred",
+                    errorMessage = e.message?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(resId = R.string.an_error_occured),
                     isLoading = false,
                 )
             }.onEach { product ->
                 _state.value =
                     _state.value.copy(
                         product = product, hasError = false,
-                        errorMessage = "", isLoading = false
+                        errorMessage = UiText.DynamicString(""), isLoading = false
                     )
             }.launchIn(viewModelScope)
 
             productUseCase.getProductByEan(barcode).catch { e ->
                 _otherProductsState.value = _otherProductsState.value.copy(
                     hasError = true,
-                    errorMessage = e.message ?: "An error occurred",
+                    errorMessage = e.message?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(resId = R.string.an_error_occured),
                     isLoading = false,
                 )
             }.onEach { products ->
                 _otherProductsState.value = _otherProductsState.value.copy(
                     products = products,
                     hasError = false,
-                    errorMessage = "",
+                    errorMessage = UiText.DynamicString(""),
                     isLoading = false
                 )
             }.launchIn(viewModelScope)
@@ -82,29 +85,36 @@ class ProductViewModel(
             productUseCase.getProductById(id.toInt()).catch { e ->
                 _state.value = _state.value.copy(
                     hasError = true,
-                    errorMessage = e.message ?: "An error occurred",
+                    errorMessage = e.message?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(resId = R.string.an_error_occured),
                     isLoading = false,
                 )
             }.onEach { product ->
                 _state.value =
                     _state.value.copy(
                         product = product, hasError = false,
-                        errorMessage = "", isLoading = false
+                        errorMessage = UiText.DynamicString(""), isLoading = false
                     )
             }.launchIn(viewModelScope)
+        }
+
+        if (barcode == null && id == null) {
+            _state.value = _state.value.copy(
+                isLoading = false,
+            )
         }
     }
 
     fun onEvent(event: ProductAddEvent) {
         when (event) {
             is ProductAddEvent.EnteredName -> {
-                _state.value.product?.let {
+                _state.value.product.let {
                     _state.value = _state.value.copy(product = it.copy(product_name = event.name))
                 }
             }
 
             is ProductAddEvent.EnteredBrands -> {
-                _state.value.product?.let {
+                _state.value.product.let {
                     _state.value = _state.value.copy(product = it.copy(brands = event.brands))
                 }
             }
@@ -123,7 +133,7 @@ class ProductViewModel(
             }
 
             is ProductAddEvent.EnteredExpiryDate -> {
-                _state.value.product?.let {
+                _state.value.product.let {
                     _state.value =
                         _state.value.copy(product = it.copy(expiry_date = event.expiryDate))
                 }
@@ -131,7 +141,7 @@ class ProductViewModel(
 
             is ProductAddEvent.Consume -> {
                 CoroutineScope(Dispatchers.IO).launch {
-                    _state.value.product?.let { product ->
+                    _state.value.product.let { product ->
                         _state.value = _state.value.copy(isLoading = true)
                         _state.value = _state.value.copy(
                             product = product.copy(
@@ -148,7 +158,14 @@ class ProductViewModel(
             is ProductAddEvent.SaveProduct -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        _state.value.product?.let { product ->
+                        _state.value.product.let { product ->
+                            if (product.product_name?.isEmpty() == true) {
+                                _state.value = _state.value.copy(
+                                    nameError = UiText.StringResource(resId = R.string.name_is_required)
+                                )
+                                return@launch
+                            }
+
                             when (_state.value.type) {
                                 TYPES.CREATE -> {
                                     productUseCase.addProduct(
@@ -169,17 +186,17 @@ class ProductViewModel(
                             }
                         }
                     } catch (e: InvalidProductException) {
-                        Timber.e("DLOG: SaveProduct - InvalidProductException: ${e.message}")
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
-                                message = e.message ?: "Couldn't save note"
+                                message = e.message?.let { UiText.DynamicString(it) }
+                                    ?: UiText.StringResource(R.string.error_on_save)
                             )
                         )
                     } catch (e: Exception) {
-                        Timber.e("DLOG: SaveProduct - Exception: ${e.message}")
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
-                                message = e.message ?: "Couldn't save note"
+                                message = e.message?.let { UiText.DynamicString(it) }
+                                    ?: UiText.StringResource(R.string.error_on_save)
                             )
                         )
                     }
@@ -189,7 +206,7 @@ class ProductViewModel(
     }
 
     sealed class UiEvent {
-        data class ShowSnackbar(val message: String) : UiEvent()
+        data class ShowSnackbar(val message: UiText) : UiEvent()
         object ProductCreated : UiEvent()
         object ProductUpdated : UiEvent()
     }

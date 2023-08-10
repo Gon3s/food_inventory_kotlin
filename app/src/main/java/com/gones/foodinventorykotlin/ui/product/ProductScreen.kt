@@ -62,6 +62,7 @@ fun ProductScreen(
     val state = viewModel.state.value
     val otherProductsState = viewModel.otherProductsState.value
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -69,7 +70,7 @@ fun ProductScreen(
                 is ProductViewModel.UiEvent.ShowSnackbar -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            event.message
+                            event.message.asString(context)
                         )
                     }
                 }
@@ -115,7 +116,7 @@ fun ProductScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = state.errorMessage)
+            Text(text = state.errorMessage.asString(context))
         }
         return
     }
@@ -139,11 +140,12 @@ fun ProductScreen(
             alignment = Alignment.Center,
         )
         OutlineTextFieldCustom(
-            value = product.product_name,
+            value = product.product_name ?: "",
             title = stringResource(id = R.string.productName),
             onValueChange = {
                 viewModel.onEvent(ProductAddEvent.EnteredName(it))
             },
+            error = state.nameError.asString(context),
         )
         OutlineTextFieldCustom(
             value = product.brands ?: "",
@@ -195,7 +197,7 @@ fun ProductScreen(
                         .fillMaxWidth()
                         .height(192.dp),
                     contentAlignment = Alignment.Center
-                ) { Text(text = otherProductsState.errorMessage) }
+                ) { Text(text = otherProductsState.errorMessage.asString(context)) }
 
             }
             val products = otherProductsState.products

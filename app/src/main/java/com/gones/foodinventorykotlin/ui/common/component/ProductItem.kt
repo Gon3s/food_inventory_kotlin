@@ -47,7 +47,7 @@ fun ProductItem(
             )
             Column {
                 product.brands?.let { Text(text = it, fontSize = 16.sp) }
-                Text(text = product.product_name, fontSize = 18.sp)
+                Text(text = product.product_name ?: "", fontSize = 18.sp)
                 Text(text = expiryDate, fontSize = 16.sp)
             }
         }

@@ -10,4 +10,7 @@
     <string name="add_without_barcode">Ajouter sans code barre</string>
     <string name="productsAlreadySaved">Produits déjà enregistrés</string>
     <string name="edit">Editer</string>
+    <string name="an_error_occured">An error occurred</string>
+    <string name="name_is_required">Name cannot be empty</string>
+    <string name="error_on_save">Couldn\'t save product</string>
 </resources>
