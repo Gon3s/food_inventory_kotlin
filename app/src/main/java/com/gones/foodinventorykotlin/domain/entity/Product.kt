@@ -10,8 +10,8 @@ data class Product(
     val barcode: String? = null,
     var brands: String? = null,
     var categories: String? = null,
-    val imageUrl: String? = null,
-    var productName: String,
+    val image_url: String? = null,
+    var product_name: String,
     var expiry_date: Long? = null,
     @Serializable(with = InstantIso8601Serializer::class)
     var created_at: Instant? = null,

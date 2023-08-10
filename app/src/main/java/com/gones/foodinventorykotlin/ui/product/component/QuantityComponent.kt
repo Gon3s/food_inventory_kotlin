@@ -1,7 +1,12 @@
 package com.gones.foodinventorykotlin.ui.product.component
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,36 +35,45 @@ fun QuantityComponent(
     onIncreaseQuantity: () -> Unit,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Max),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FilledIconButton(
-            onClick = onDecreaseQuantity,
-            modifier = Modifier.size(36.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_minus),
-                contentDescription = null
-            )
-        }
         OutlinedTextField(
             value = value.toString(),
             onValueChange = { onValueChange(it.toInt()) },
             label = { Text(text = title) },
             modifier = modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp),
+                .weight(1f),
             placeholder = { Text(text = title) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        FilledIconButton(
-            onClick = onIncreaseQuantity,
-            modifier = Modifier.size(36.dp)
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .fillMaxHeight()
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_add),
-                contentDescription = null
-            )
+            FilledIconButton(
+                onClick = onDecreaseQuantity,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_minus),
+                    contentDescription = null
+                )
+            }
+            FilledIconButton(
+                onClick = onIncreaseQuantity,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_add),
+                    contentDescription = null
+                )
+            }
         }
     }
 }

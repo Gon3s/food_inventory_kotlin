@@ -8,4 +8,6 @@
     <string name="consumedAt">Consommé le : %s</string>
     <string name="retire">Retirer</string>
     <string name="add_without_barcode">Ajouter sans code barre</string>
+    <string name="productsAlreadySaved">Produits déjà enregistrés</string>
+    <string name="edit">Editer</string>
 </resources>

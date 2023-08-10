@@ -1,9 +1,9 @@
 package com.gones.foodinventorykotlin.ui.common
 
-import androidx.appcompat.view.menu.ActionMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,6 +14,13 @@ const val HomeRoute = "home"
 const val ScanRoute = "scan"
 const val ProductRoute = "product?barcode={barcode}&id={id}"
 
+class MenuItem(
+    val title: String,
+    val onClick: (() -> Unit),
+    val icon: ImageVector,
+    val contentDescription: String? = null,
+)
+
 sealed interface Screen {
     val route: String
     val isAppBarVisible: Boolean
@@ -21,7 +28,7 @@ sealed interface Screen {
     val navigationIconContentDescription: String?
     val onNavigationIconClick: (() -> Unit)?
     val title: String
-    val actionsMenu: List<ActionMenuItem>
+    val actionsMenu: List<MenuItem>
     val floatingActionIcon: ImageVector?
         get() = null
     val floatingActionContentDescription: String?
@@ -36,7 +43,7 @@ sealed interface Screen {
         override val navigationIconContentDescription: String? = null
         override val onNavigationIconClick: (() -> Unit)? = null
         override val title: String = "Home" // TODO: string resource
-        override val actionsMenu: List<ActionMenuItem> = emptyList()
+        override val actionsMenu: List<MenuItem> = emptyList()
         override val floatingActionIcon: ImageVector = Icons.Filled.Add
         override val floatingActionIconClick: (() -> Unit) = {
             Timber.d("DLOG: floatingActionIconClick tryEmit")
@@ -61,7 +68,7 @@ sealed interface Screen {
             _actions.tryEmit(AppBarIcons.NavigationIcon)
         }
         override val title: String = "Scan" // TODO: string resource
-        override val actionsMenu: List<ActionMenuItem> = emptyList()
+        override val actionsMenu: List<MenuItem> = emptyList()
 
         enum class AppBarIcons {
             NavigationIcon
@@ -80,10 +87,19 @@ sealed interface Screen {
             _actions.tryEmit(AppBarIcons.NavigationIcon)
         }
         override val title: String = "Scan" // TODO: string resource
-        override val actionsMenu: List<ActionMenuItem> = emptyList()
+        override val actionsMenu: List<MenuItem> = listOf(
+            MenuItem(
+                title = "Save",
+                onClick = {
+                    _actions.tryEmit(AppBarIcons.Save)
+                },
+                icon = Icons.Default.Done
+            )
+        )
 
         enum class AppBarIcons {
-            NavigationIcon
+            NavigationIcon,
+            Save
         }
 
         private val _actions = MutableSharedFlow<AppBarIcons>(extraBufferCapacity = 1)

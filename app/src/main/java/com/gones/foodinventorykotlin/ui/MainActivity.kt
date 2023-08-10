@@ -11,8 +11,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,61 +31,74 @@ import com.gones.foodinventorykotlin.ui.product.ProductScreen
 import com.gones.foodinventorykotlin.ui.scan.ScanScreen
 import com.gones.foodinventorykotlin.ui.theme.FoodInventoryTheme
 
+@ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            FoodInventoryTheme {
+            FoodInventoryTheme(
+                darkTheme = false,
+                dynamicColor = false
+            ) {
                 val navController = rememberNavController()
                 val appBarState = rememberAppBarState(navController = navController)
                 val snackbarHostState = remember { SnackbarHostState() }
 
-                Scaffold(
-                    snackbarHost = { SnackbarHost(snackbarHostState) },
-                    topBar = {
-                        if (appBarState.isVisible) {
-                            FoodInventoryTopAppBar(
-                                appBarState = appBarState,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    },
-                    floatingActionButton = {
-                        FoodInventoryFloatingButton(appBarState = appBarState)
-                    },
-                ) { paddingValues ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = HomeRoute,
-                        Modifier.padding(paddingValues)
-                    ) {
-                        composable(HomeRoute) {
-                            HomeScreen(appBarState = appBarState, navController = navController)
-                        }
-                        composable(ScanRoute) {
-                            ScanScreen(appBarState = appBarState, navController = navController)
-                        }
-                        composable(
-                            ProductRoute, arguments = listOf(
-                                navArgument("barcode") {
-                                    type = NavType.StringType
-                                    defaultValue = null
-                                    nullable = true
-                                },
-                                navArgument("id") {
-                                    type = NavType.StringType
-                                    defaultValue = null
-                                    nullable = true
-                                },
-                            )
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentColor = Color.White,
+                ) {
+                    Scaffold(
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
+                        topBar = {
+                            if (appBarState.isVisible) {
+                                FoodInventoryTopAppBar(
+                                    appBarState = appBarState,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
+                        },
+                        floatingActionButton = {
+                            FoodInventoryFloatingButton(appBarState = appBarState)
+                        },
+                    ) { paddingValues ->
+                        NavHost(
+                            navController = navController,
+                            startDestination = HomeRoute,
+                            Modifier.padding(paddingValues)
                         ) {
-                            ProductScreen(
-                                appBarState = appBarState,
-                                navController = navController,
-                                barcode = it.arguments?.getString("barcode"),
-                                id = it.arguments?.getString("id")
-                            )
+                            composable(HomeRoute) {
+                                HomeScreen(
+                                    appBarState = appBarState,
+                                    navController = navController
+                                )
+                            }
+                            composable(ScanRoute) {
+                                ScanScreen(appBarState = appBarState, navController = navController)
+                            }
+                            composable(
+                                ProductRoute, arguments = listOf(
+                                    navArgument("barcode") {
+                                        type = NavType.StringType
+                                        defaultValue = null
+                                        nullable = true
+                                    },
+                                    navArgument("id") {
+                                        type = NavType.StringType
+                                        defaultValue = null
+                                        nullable = true
+                                    },
+                                )
+                            ) {
+                                ProductScreen(
+                                    appBarState = appBarState,
+                                    snackbarHostState = snackbarHostState,
+                                    navController = navController,
+                                    barcode = it.arguments?.getString("barcode"),
+                                    id = it.arguments?.getString("id")
+                                )
+                            }
                         }
                     }
                 }

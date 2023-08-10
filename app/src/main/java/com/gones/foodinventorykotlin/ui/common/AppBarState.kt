@@ -1,6 +1,5 @@
 package com.gones.foodinventorykotlin.ui.common
 
-import androidx.appcompat.view.menu.ActionMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -48,7 +47,7 @@ class AppBarState(
     val title: String
         @Composable get() = currentScreen?.title.orEmpty()
 
-    val actions: List<ActionMenuItem>
+    val actions: List<MenuItem>
         @Composable get() = currentScreen?.actionsMenu.orEmpty()
 
     val isFloationButtonVisible: Boolean

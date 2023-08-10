@@ -1,9 +1,6 @@
 package com.gones.foodinventorykotlin.data.model
 
 import androidx.annotation.Keep
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.squareup.moshi.Json
 
@@ -20,13 +17,13 @@ data class ProductResponse(
     @field:Json(name = "image_url")
     val imageUrl: String,
     @field:Json(name = "product_name")
-    val productName: String
+    val productName: String,
 ) {
     fun toModel() = Product(
         brands = brands,
         categories = categories,
         barcode = code,
-        imageUrl = imageUrl,
-        productName = productName
+        image_url = imageUrl,
+        product_name = productName
     )
 }

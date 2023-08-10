@@ -12,27 +12,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gones.foodinventorykotlin.R
-import com.gones.foodinventorykotlin.domain.resource.Resource
 import com.gones.foodinventorykotlin.ui.common.AppBarState
 import com.gones.foodinventorykotlin.ui.common.Screen
-import com.gones.foodinventorykotlin.ui.home.ProductItem
+import com.gones.foodinventorykotlin.ui.common.component.ProductItem
 import com.gones.foodinventorykotlin.ui.product.component.DatePickerCustom
 import com.gones.foodinventorykotlin.ui.product.component.OutlineTextFieldCustom
 import com.gones.foodinventorykotlin.ui.product.component.QuantityComponent
@@ -45,6 +43,7 @@ import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterial3Api
 @Composable
@@ -52,6 +51,7 @@ fun ProductScreen(
     appBarState: AppBarState,
     barcode: String? = null,
     id: String? = null,
+    snackbarHostState: SnackbarHostState,
     navController: NavController,
 ) {
     val viewModel = getViewModel<ProductViewModel>(
@@ -60,7 +60,7 @@ fun ProductScreen(
         }
     )
     val state = viewModel.state.value
-    val snackbarHostState = remember { SnackbarHostState() }
+    val otherProductsState = viewModel.otherProductsState.value
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
@@ -92,134 +92,146 @@ fun ProductScreen(
                 Screen.Product.AppBarIcons.NavigationIcon -> {
                     navController.popBackStack()
                 }
+
+                Screen.Product.AppBarIcons.Save -> {
+                    viewModel.onEvent(ProductAddEvent.SaveProduct)
+                }
             }
         }?.launchIn(this)
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { _ ->
-        Column(
+    if (state.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    if (state.hasError) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = state.errorMessage)
+        }
+        return
+    }
+
+    val product = state.product ?: return
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(
+                LocalContext.current
+            ).data(product.image_url)
+                .crossfade(true).build(),
+            contentDescription = product.product_name,
+            modifier = Modifier
+                .padding(8.dp)
+                .size(160.dp),
+            alignment = Alignment.Center,
+        )
+        OutlineTextFieldCustom(
+            value = product.product_name,
+            title = stringResource(id = R.string.productName),
+            onValueChange = {
+                viewModel.onEvent(ProductAddEvent.EnteredName(it))
+            },
+        )
+        OutlineTextFieldCustom(
+            value = product.brands ?: "",
+            title = stringResource(id = R.string.brands),
+            onValueChange = {
+                viewModel.onEvent(ProductAddEvent.EnteredBrands(it))
+            },
+        )
+        if (state.type == ProductViewModel.TYPES.CREATE) {
+            QuantityComponent(
+                value = viewModel.state.value.quantity,
+                title = stringResource(id = R.string.productQuantity),
+                onValueChange = {
+                    viewModel.onEvent(ProductAddEvent.EnteredQuantity(it))
+                },
+                onDecreaseQuantity = {
+                    viewModel.onEvent(ProductAddEvent.DecreaseQuantity)
+                },
+                onIncreaseQuantity = {
+                    viewModel.onEvent(ProductAddEvent.IncreaseQuantity)
+                },
+            )
+        }
+        DatePickerCustom(
+            title = stringResource(id = R.string.expirationDate),
+            date = product.expiry_date,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            when (val productState = state.product) {
-                is Resource.Success -> {
-                    val product = productState.data
-                    AsyncImage(
-                        model = ImageRequest.Builder(
-                            LocalContext.current
-                        ).data(product.imageUrl)
-                            .crossfade(true).build(),
-                        contentDescription = product.productName,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(160.dp),
-                        alignment = Alignment.Center,
-                    )
-                    OutlineTextFieldCustom(
-                        value = product.productName,
-                        title = stringResource(id = R.string.productName),
-                        onValueChange = {
-                            viewModel.onEvent(ProductAddEvent.EnteredName(it))
-                        },
-                    )
-                    OutlineTextFieldCustom(
-                        value = product.brands ?: "",
-                        title = stringResource(id = R.string.brands),
-                        onValueChange = {
-                            viewModel.onEvent(ProductAddEvent.EnteredBrands(it))
-                        },
-                    )
-                    if (state.type == ProductViewModel.TYPES.CREATE) {
-                        QuantityComponent(
-                            value = viewModel.state.value.quantity,
-                            title = stringResource(id = R.string.productQuantity),
-                            onValueChange = {
-                                viewModel.onEvent(ProductAddEvent.EnteredQuantity(it))
-                            },
-                            onDecreaseQuantity = {
-                                viewModel.onEvent(ProductAddEvent.DecreaseQuantity)
-                            },
-                            onIncreaseQuantity = {
-                                viewModel.onEvent(ProductAddEvent.IncreaseQuantity)
-                            },
+                .padding(vertical = 8.dp)
+        )
+
+        if (state.type == ProductViewModel.TYPES.CREATE) {
+            if (otherProductsState.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(192.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+
+                return
+            }
+
+            if (otherProductsState.hasError) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(192.dp),
+                    contentAlignment = Alignment.Center
+                ) { Text(text = otherProductsState.errorMessage) }
+
+            }
+            val products = otherProductsState.products
+            if (products.isNotEmpty()) {
+                Text(
+                    text = stringResource(id = R.string.productsAlreadySaved),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                LazyColumn {
+                    items(products.size) { index ->
+                        ProductItem(
+                            product = products[index],
+                            size = 60.dp
                         )
                     }
-                    DatePickerCustom(
-                        title = stringResource(id = R.string.expirationDate),
-                        date = product.expiry_date,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    )
-                    if (state.type == ProductViewModel.TYPES.CREATE) {
-                        when (val productsState = state.products) {
-                            is Resource.Success -> {
-                                val products = productsState.data
-                                LazyColumn {
-                                    items(products.size) { index ->
-                                        ProductItem(
-                                            product = products[index]
-                                        )
-                                    }
-                                }
-                            }
-
-                            is Resource.Failure -> {
-                                Text(text = productsState.throwable.localizedMessage ?: "Error")
-                            }
-
-                            is Resource.Progress -> {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-                        }
-                    }
-
-                    if (state.type == ProductViewModel.TYPES.UPDATE) {
-                        if (product.consumed) {
-                            Text(
-                                text = stringResource(
-                                    id = R.string.consumedAt,
-                                    SimpleDateFormat(
-                                        "dd/MM/yyyy",
-                                        Locale.getDefault()
-                                    ).format(product.expiry_date),
-                                ),
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
-                        } else {
-                            Button(onClick = { viewModel.onEvent(ProductAddEvent.Consume) }) {
-                                Text(text = stringResource(id = R.string.retire))
-                            }
-                        }
-                    }
                 }
+            }
+        }
 
-                is Resource.Failure -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = productState.throwable.localizedMessage ?: "Error")
-                    }
-                }
-
-                is Resource.Progress -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+        if (state.type == ProductViewModel.TYPES.UPDATE) {
+            if (product.consumed && product.consumed_at != null) {
+                Text(
+                    text = stringResource(
+                        id = R.string.consumedAt,
+                        SimpleDateFormat(
+                            "dd/MM/yyyy",
+                            Locale.getDefault()
+                        ).format(product.consumed_at?.epochSeconds),
+                    ),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            } else {
+                Button(onClick = { viewModel.onEvent(ProductAddEvent.Consume) }) {
+                    Text(text = stringResource(id = R.string.retire))
                 }
             }
         }

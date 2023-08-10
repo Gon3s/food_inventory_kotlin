@@ -17,11 +17,7 @@ class HomeViewModel(
 
     private var getProductsJob: Job? = null
 
-    init {
-        getProducts()
-    }
-
-    private fun getProducts() {
+    fun getProducts() {
         getProductsJob?.cancel()
         getProductsJob = productUseCase.getProducts().onEach { products ->
             _state.value = state.value.copy(products = products)

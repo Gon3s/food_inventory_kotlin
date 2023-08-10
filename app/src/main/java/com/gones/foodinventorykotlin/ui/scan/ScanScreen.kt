@@ -41,6 +41,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.ui.common.AppBarState
+import com.gones.foodinventorykotlin.ui.common.HomeRoute
 import com.gones.foodinventorykotlin.ui.common.Screen
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -121,7 +122,9 @@ fun ScanScreen(
                             ContextCompat.getMainExecutor(context),
                             BarCodeAnalyzer { result ->
                                 Timber.d("DLOG : ScanScreen : scan $result")
-                                navController.navigate("product?barcode=$result")
+                                navController.navigate("product?barcode=$result") {
+                                    popUpTo(HomeRoute)
+                                }
                             }
                         )
                         try {
