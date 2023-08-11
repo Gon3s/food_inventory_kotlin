@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.common
+package com.gones.foodinventorykotlin.ui.common.component
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import com.gones.foodinventorykotlin.ui.common.AppBarState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

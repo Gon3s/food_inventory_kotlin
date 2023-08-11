@@ -87,7 +87,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 
     // Splash Screen
-    implementation "androidx.core:core-splashscreen:1.0.0"
+    implementation "androidx.core:core-splashscreen:1.0.1"
 
     // Compose
     implementation "androidx.compose.material3:material3:$compose_version"
@@ -147,6 +147,7 @@ dependencies {
 
     /* Supabase */
     implementation("io.github.jan-tennert.supabase:postgrest-kt:$supabase_version")
+    implementation "io.github.jan-tennert.supabase:gotrue-kt:$supabase_version"
 
     /* Coil */
     implementation("io.coil-kt:coil-compose:$coil_version")

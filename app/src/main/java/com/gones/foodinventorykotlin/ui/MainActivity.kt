@@ -22,14 +22,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.gones.foodinventorykotlin.ui.common.FoodInventoryFloatingButton
-import com.gones.foodinventorykotlin.ui.common.FoodInventoryTopAppBar
-import com.gones.foodinventorykotlin.ui.common.HomeRoute
-import com.gones.foodinventorykotlin.ui.common.ProductRoute
-import com.gones.foodinventorykotlin.ui.common.ScanRoute
+import com.gones.foodinventorykotlin.ui.common.component.FoodInventoryFloatingButton
+import com.gones.foodinventorykotlin.ui.common.component.FoodInventoryTopAppBar
 import com.gones.foodinventorykotlin.ui.common.rememberAppBarState
 import com.gones.foodinventorykotlin.ui.home.HomeScreen
+import com.gones.foodinventorykotlin.ui.login.LoginScreen
+import com.gones.foodinventorykotlin.ui.navigation.HomeRoute
+import com.gones.foodinventorykotlin.ui.navigation.LoginRoute
+import com.gones.foodinventorykotlin.ui.navigation.ProductRoute
+import com.gones.foodinventorykotlin.ui.navigation.ScanRoute
+import com.gones.foodinventorykotlin.ui.navigation.SignupRoute
 import com.gones.foodinventorykotlin.ui.product.ProductScreen
+import com.gones.foodinventorykotlin.ui.register.RegisterScreen
 import com.gones.foodinventorykotlin.ui.scan.ScanScreen
 import com.gones.foodinventorykotlin.ui.theme.FoodInventoryTheme
 
@@ -39,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -76,11 +79,23 @@ class MainActivity : ComponentActivity() {
                     ) { paddingValues ->
                         NavHost(
                             navController = navController,
-                            startDestination = HomeRoute,
+                            startDestination = LoginRoute,
                             Modifier.padding(paddingValues)
                         ) {
                             composable(HomeRoute) {
                                 HomeScreen(
+                                    appBarState = appBarState,
+                                    navController = navController
+                                )
+                            }
+                            composable(LoginRoute) {
+                                LoginScreen(
+                                    appBarState = appBarState,
+                                    navController = navController
+                                )
+                            }
+                            composable(SignupRoute) {
+                                RegisterScreen(
                                     appBarState = appBarState,
                                     navController = navController
                                 )

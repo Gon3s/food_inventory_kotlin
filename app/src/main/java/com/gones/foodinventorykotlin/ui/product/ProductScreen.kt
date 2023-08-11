@@ -30,10 +30,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.ui.common.AppBarState
-import com.gones.foodinventorykotlin.ui.common.Screen
+import com.gones.foodinventorykotlin.ui.common.component.OutlineTextFieldCustom
 import com.gones.foodinventorykotlin.ui.common.component.ProductItem
+import com.gones.foodinventorykotlin.ui.navigation.Screen
 import com.gones.foodinventorykotlin.ui.product.component.DatePickerCustom
-import com.gones.foodinventorykotlin.ui.product.component.OutlineTextFieldCustom
 import com.gones.foodinventorykotlin.ui.product.component.QuantityComponent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn

@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.product.component
+package com.gones.foodinventorykotlin.ui.common.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

@@ -11,9 +11,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.ui.common.AppBarState
-import com.gones.foodinventorykotlin.ui.common.ScanRoute
-import com.gones.foodinventorykotlin.ui.common.Screen
 import com.gones.foodinventorykotlin.ui.common.component.ProductItem
+import com.gones.foodinventorykotlin.ui.navigation.ScanRoute
+import com.gones.foodinventorykotlin.ui.navigation.Screen
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.koinViewModel

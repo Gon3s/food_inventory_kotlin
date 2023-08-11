@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.common
+package com.gones.foodinventorykotlin.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -9,11 +9,12 @@ import com.gones.foodinventorykotlin.R
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import timber.log.Timber
 
 const val HomeRoute = "home"
 const val ScanRoute = "scan"
 const val ProductRoute = "product?barcode={barcode}&id={id}"
+const val LoginRoute = "login"
+const val SignupRoute = "signUp"
 
 class MenuItem(
     val onClick: (() -> Unit),
@@ -25,10 +26,15 @@ sealed interface Screen {
     val route: String
     val isAppBarVisible: Boolean
     val navigationIcon: ImageVector?
+        get() = null
     val navigationIconContentDescription: String?
+        get() = null
     val onNavigationIconClick: (() -> Unit)?
+        get() = null
     val title: Int?
+        get() = null
     val actionsMenu: List<MenuItem>
+        get() = emptyList()
     val floatingActionIcon: ImageVector?
         get() = null
     val floatingActionContentDescription: String?
@@ -39,14 +45,9 @@ sealed interface Screen {
     class Home : Screen {
         override val route: String = HomeRoute
         override val isAppBarVisible: Boolean = true
-        override val navigationIcon: ImageVector? = null
-        override val navigationIconContentDescription: String? = null
-        override val onNavigationIconClick: (() -> Unit)? = null
         override val title: Int = R.string.app_name
-        override val actionsMenu: List<MenuItem> = emptyList()
         override val floatingActionIcon: ImageVector = Icons.Filled.Add
         override val floatingActionIconClick: (() -> Unit) = {
-            Timber.d("DLOG: floatingActionIconClick tryEmit")
             _actions.tryEmit(FloationActionIcons.ScanIcon)
         }
 
@@ -62,13 +63,10 @@ sealed interface Screen {
         override val route: String = ScanRoute
         override val isAppBarVisible: Boolean = true
         override val navigationIcon: ImageVector = Icons.Default.ArrowBack
-        override val navigationIconContentDescription: String? = null
         override val onNavigationIconClick: (() -> Unit) = {
-            Timber.d("DLOG: onNavigationIconClick tryEmit")
             _actions.tryEmit(AppBarIcons.NavigationIcon)
         }
         override val title: Int = R.string.scan_product
-        override val actionsMenu: List<MenuItem> = emptyList()
 
         enum class AppBarIcons {
             NavigationIcon
@@ -82,7 +80,6 @@ sealed interface Screen {
         override val route: String = ProductRoute
         override val isAppBarVisible: Boolean = true
         override val navigationIcon: ImageVector = Icons.Default.ArrowBack
-        override val navigationIconContentDescription: String? = null
         override val onNavigationIconClick: (() -> Unit) = {
             _actions.tryEmit(AppBarIcons.NavigationIcon)
         }
@@ -104,14 +101,37 @@ sealed interface Screen {
         private val _actions = MutableSharedFlow<AppBarIcons>(extraBufferCapacity = 1)
         val actions: Flow<AppBarIcons> = _actions.asSharedFlow()
     }
-}
 
+    class SignUp : Screen {
+        override val route: String = SignupRoute
+        override val isAppBarVisible: Boolean = true
+        override val title: Int = R.string.sign_up
+        override val navigationIcon: ImageVector = Icons.Default.ArrowBack
+        override val onNavigationIconClick: (() -> Unit) = {
+            _actions.tryEmit(AppBarIcons.NavigationIcon)
+        }
+
+        enum class AppBarIcons {
+            NavigationIcon,
+        }
+
+        private val _actions = MutableSharedFlow<AppBarIcons>(extraBufferCapacity = 1)
+        val actions: Flow<AppBarIcons> = _actions.asSharedFlow()
+    }
+
+    class Login : Screen {
+        override val route: String = LoginRoute
+        override val isAppBarVisible: Boolean = false
+    }
+}
 
 fun getScreen(route: String?): Screen? {
     return when (route) {
         HomeRoute -> Screen.Home()
         ScanRoute -> Screen.Scan()
         ProductRoute -> Screen.Product()
+        LoginRoute -> Screen.Login()
+        SignupRoute -> Screen.SignUp()
         else -> null
     }
 }
