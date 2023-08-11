@@ -20,10 +20,21 @@ class ProductRepositoryImpl(
 ) : ProductRepository {
     override suspend fun getProductByEanWS(barcode: String): ProductResult {
         val productResultResponse = remoteApi.getProduct(barcode)
-        return productResultResponse.toModel()
+
+        return if (productResultResponse.product != null) {
+            productResultResponse.toModel()
+
+        } else {
+            ProductResult(
+                status = productResultResponse.status,
+                product = Product(
+                    barcode = barcode,
+                ),
+            )
+        }
     }
 
-    override suspend fun getProducts(): Flow<List<Product>> = flow {
+    override fun getProducts(): Flow<List<Product>> = flow {
         val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 Product::consumed eq false
@@ -38,16 +49,17 @@ class ProductRepositoryImpl(
         supabaseClient.postgrest["product"].insert(product)
     }
 
-    override suspend fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
+    override fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
         val product = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
+                Product::consumed eq false
                 eq("barcode", barcode)
             }.decodeList<Product>()
         }
         emit(product)
     }
 
-    override suspend fun getProductById(id: Int): Flow<Product> = flow {
+    override fun getProductById(id: Int): Flow<Product> = flow {
         val product = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select() {
                 eq("id", id)
@@ -61,13 +73,11 @@ class ProductRepositoryImpl(
             Timber.d("DLOG: updateProduct: $product")
             val result: PostgrestResult = supabaseClient.postgrest["product"].update(
                 {
-                    Product::brands setTo product.brands
-                    Product::categories setTo product.categories
+                    Product::product_name setTo product.product_name
                     Product::expiry_date setTo product.expiry_date
                     Product::consumed setTo product.consumed
                     Product::consumed_at setTo product.consumed_at
                     Product::note setTo product.note
-
                 }
             ) {
                 Product::id eq product.id

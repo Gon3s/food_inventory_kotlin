@@ -1,11 +1,11 @@
 package com.gones.foodinventorykotlin.domain.usecase
 
-import com.gones.foodinventorykotlin.domain.entity.InvalidProductException
+import com.gones.foodinventorykotlin.R
+import com.gones.foodinventorykotlin.common.UiText
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.datetime.Clock
 
 class ProductUseCase(
     private val productRepository: ProductRepository,
@@ -14,34 +14,49 @@ class ProductUseCase(
         productRepository.getProductByEanWS(barcode).product?.let { emit(it) }
     }
 
-    suspend fun addProduct(product: Product, quantity: Int) {
-        if (product.productName?.isBlank() == true) {
-            throw InvalidProductException("The name of the product can't be empty.")
+    suspend fun addProduct(product: Product, quantity: Int): ProductResult {
+        if (product.product_name?.isBlank() == true) {
+            return ProductResult(
+                successful = false,
+                errorMessage = UiText.StringResource(R.string.name_is_required)
+            )
         }
+
         if (quantity < 1) {
-            throw InvalidProductException("The quantity must be positive and not empty.")
+            return ProductResult(
+                successful = false,
+                errorMessage = UiText.StringResource(R.string.quantity_must_be_positive)
+            )
         }
+
         for (i in 1..quantity) {
             productRepository.insertProduct(product)
         }
+
+        return ProductResult(successful = true)
     }
 
-    suspend fun updateProduct(product: Product) {
-        if (product.productName?.isBlank() == true) {
-            throw InvalidProductException("The name of the product can't be empty.")
+    suspend fun updateProduct(product: Product): ProductResult {
+        if (product.product_name?.isBlank() == true) {
+            return ProductResult(
+                successful = false,
+                errorMessage = UiText.StringResource(R.string.name_is_required)
+            )
         }
+
         productRepository.updateProduct(product)
+
+        return ProductResult(successful = true)
     }
 
-    suspend fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
-    suspend fun getProductByEan(barcode: String): Flow<List<Product>> =
+    fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
+
+    fun getProductByEan(barcode: String): Flow<List<Product>> =
         productRepository.getProductsByEan(barcode)
 
-    suspend fun getProductById(id: Int): Flow<Product> = productRepository.getProductById(id)
+    fun getProductById(id: Int): Flow<Product> = productRepository.getProductById(id)
 
     suspend fun consumedProduct(product: Product) {
-        product.consumed = true
-        product.consumed_at = Clock.System.now()
         productRepository.updateProduct(product)
     }
 }
