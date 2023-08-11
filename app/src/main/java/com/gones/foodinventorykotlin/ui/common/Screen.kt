@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.gones.foodinventorykotlin.R
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -15,7 +16,6 @@ const val ScanRoute = "scan"
 const val ProductRoute = "product?barcode={barcode}&id={id}"
 
 class MenuItem(
-    val title: String,
     val onClick: (() -> Unit),
     val icon: ImageVector,
     val contentDescription: String? = null,
@@ -27,7 +27,7 @@ sealed interface Screen {
     val navigationIcon: ImageVector?
     val navigationIconContentDescription: String?
     val onNavigationIconClick: (() -> Unit)?
-    val title: String
+    val title: Int?
     val actionsMenu: List<MenuItem>
     val floatingActionIcon: ImageVector?
         get() = null
@@ -42,7 +42,7 @@ sealed interface Screen {
         override val navigationIcon: ImageVector? = null
         override val navigationIconContentDescription: String? = null
         override val onNavigationIconClick: (() -> Unit)? = null
-        override val title: String = "Home" // TODO: string resource
+        override val title: Int = R.string.app_name
         override val actionsMenu: List<MenuItem> = emptyList()
         override val floatingActionIcon: ImageVector = Icons.Filled.Add
         override val floatingActionIconClick: (() -> Unit) = {
@@ -67,7 +67,7 @@ sealed interface Screen {
             Timber.d("DLOG: onNavigationIconClick tryEmit")
             _actions.tryEmit(AppBarIcons.NavigationIcon)
         }
-        override val title: String = "Scan" // TODO: string resource
+        override val title: Int = R.string.scan_product
         override val actionsMenu: List<MenuItem> = emptyList()
 
         enum class AppBarIcons {
@@ -86,10 +86,9 @@ sealed interface Screen {
         override val onNavigationIconClick: (() -> Unit) = {
             _actions.tryEmit(AppBarIcons.NavigationIcon)
         }
-        override val title: String = "Scan" // TODO: string resource
+        override val title: Int? = null
         override val actionsMenu: List<MenuItem> = listOf(
             MenuItem(
-                title = "Save",
                 onClick = {
                     _actions.tryEmit(AppBarIcons.Save)
                 },
@@ -109,7 +108,6 @@ sealed interface Screen {
 
 
 fun getScreen(route: String?): Screen? {
-    Timber.d("DLOG: getScreen route: $route")
     return when (route) {
         HomeRoute -> Screen.Home()
         ScanRoute -> Screen.Scan()

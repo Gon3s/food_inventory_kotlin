@@ -1,14 +1,14 @@
 package com.gones.foodinventorykotlin.ui.home
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.ui.common.AppBarState
 import com.gones.foodinventorykotlin.ui.common.ScanRoute
@@ -44,12 +44,10 @@ fun HomeScreen(
     }
 
     LazyColumn(
-        contentPadding = PaddingValues(16.dp),
         modifier = Modifier
             .fillMaxSize()
     ) {
-        items(state.products.size) { index ->
-            val product = state.products[index]
+        items(items = state.products, key = { product -> product.id }) { product ->
             ProductItem(
                 product = product,
                 modifier = Modifier
@@ -59,6 +57,7 @@ fun HomeScreen(
                         navController.navigate("product?id=${product.id}")
                     }
             )
+            HorizontalDivider()
         }
     }
 }

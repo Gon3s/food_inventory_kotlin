@@ -18,6 +18,7 @@ fun OutlineTextFieldCustom(
     value: String,
     title: String,
     modifier: Modifier = Modifier,
+    singleLine: Boolean = true,
     error: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (String) -> Unit,
@@ -26,6 +27,7 @@ fun OutlineTextFieldCustom(
         value = value,
         onValueChange = onValueChange,
         label = { Text(text = title) },
+        singleLine = singleLine,
         modifier = modifier
             .padding(vertical = 8.dp)
             .fillMaxWidth(),

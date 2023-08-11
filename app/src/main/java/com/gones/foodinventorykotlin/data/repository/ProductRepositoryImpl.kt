@@ -62,13 +62,11 @@ class ProductRepositoryImpl(
             Timber.d("DLOG: updateProduct: $product")
             val result: PostgrestResult = supabaseClient.postgrest["product"].update(
                 {
-                    Product::brands setTo product.brands
-                    Product::categories setTo product.categories
+                    Product::product_name setTo product.product_name
                     Product::expiry_date setTo product.expiry_date
                     Product::consumed setTo product.consumed
                     Product::consumed_at setTo product.consumed_at
                     Product::note setTo product.note
-                    Product::product_name setTo product.product_name
                 }
             ) {
                 Product::id eq product.id

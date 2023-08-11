@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.common.UiText
-import com.gones.foodinventorykotlin.domain.entity.InvalidProductException
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -113,9 +112,9 @@ class ProductViewModel(
                 }
             }
 
-            is ProductAddEvent.EnteredBrands -> {
+            is ProductAddEvent.EnteredNote -> {
                 _state.value.product.let {
-                    _state.value = _state.value.copy(product = it.copy(brands = event.brands))
+                    _state.value = _state.value.copy(product = it.copy(note = event.note))
                 }
             }
 
@@ -159,39 +158,45 @@ class ProductViewModel(
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         _state.value.product.let { product ->
-                            if (product.product_name?.isEmpty() == true) {
-                                _state.value = _state.value.copy(
-                                    nameError = UiText.StringResource(resId = R.string.name_is_required)
-                                )
-                                return@launch
-                            }
-
                             when (_state.value.type) {
                                 TYPES.CREATE -> {
-                                    productUseCase.addProduct(
+                                    val addProductResult = productUseCase.addProduct(
                                         product,
                                         _state.value.quantity
                                     )
 
-                                    _eventFlow.emit(UiEvent.ProductCreated)
+                                    if (addProductResult.successful) {
+                                        _eventFlow.emit(UiEvent.ProductCreated)
+                                    } else {
+                                        _eventFlow.emit(
+                                            UiEvent.ShowSnackbar(
+                                                message = addProductResult.errorMessage
+                                                    ?: UiText.StringResource(R.string.error_on_save)
+                                            )
+                                        )
+                                    }
                                 }
 
                                 TYPES.UPDATE -> {
-                                    productUseCase.updateProduct(
+                                    val updateProductResult = productUseCase.updateProduct(
                                         product
                                     )
+
+                                    if (updateProductResult.successful) {
+                                        _eventFlow.emit(UiEvent.ProductCreated)
+                                    } else {
+                                        _eventFlow.emit(
+                                            UiEvent.ShowSnackbar(
+                                                message = updateProductResult.errorMessage
+                                                    ?: UiText.StringResource(R.string.error_on_save)
+                                            )
+                                        )
+                                    }
 
                                     _eventFlow.emit(UiEvent.ProductUpdated)
                                 }
                             }
                         }
-                    } catch (e: InvalidProductException) {
-                        _eventFlow.emit(
-                            UiEvent.ShowSnackbar(
-                                message = e.message?.let { UiText.DynamicString(it) }
-                                    ?: UiText.StringResource(R.string.error_on_save)
-                            )
-                        )
                     } catch (e: Exception) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(

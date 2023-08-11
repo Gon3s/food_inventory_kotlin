@@ -8,9 +8,6 @@ import com.squareup.moshi.Json
 data class ProductResponse(
     @field:Json(name = "id")
     var id: Int,
-    @field:Json(name = "brands")
-    val brands: String,
-    @field:Json(name = "categories")
     val categories: String,
     @field:Json(name = "code")
     val code: String,
@@ -20,8 +17,6 @@ data class ProductResponse(
     val productName: String,
 ) {
     fun toModel() = Product(
-        brands = brands,
-        categories = categories,
         barcode = code,
         image_url = imageUrl,
         product_name = productName

@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -121,119 +122,148 @@ fun ProductScreen(
         return
     }
 
-    val product = state.product ?: return
+    val product = state.product
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(
-                LocalContext.current
-            ).data(product.image_url)
-                .crossfade(true).build(),
-            contentDescription = product.product_name,
-            modifier = Modifier
-                .padding(8.dp)
-                .size(160.dp),
-            alignment = Alignment.Center,
-        )
-        OutlineTextFieldCustom(
-            value = product.product_name ?: "",
-            title = stringResource(id = R.string.productName),
-            onValueChange = {
-                viewModel.onEvent(ProductAddEvent.EnteredName(it))
-            },
-            error = state.nameError.asString(context),
-        )
-        OutlineTextFieldCustom(
-            value = product.brands ?: "",
-            title = stringResource(id = R.string.brands),
-            onValueChange = {
-                viewModel.onEvent(ProductAddEvent.EnteredBrands(it))
-            },
-        )
-        if (state.type == ProductViewModel.TYPES.CREATE) {
-            QuantityComponent(
-                value = viewModel.state.value.quantity,
-                title = stringResource(id = R.string.productQuantity),
-                onValueChange = {
-                    viewModel.onEvent(ProductAddEvent.EnteredQuantity(it))
-                },
-                onDecreaseQuantity = {
-                    viewModel.onEvent(ProductAddEvent.DecreaseQuantity)
-                },
-                onIncreaseQuantity = {
-                    viewModel.onEvent(ProductAddEvent.IncreaseQuantity)
-                },
-            )
-        }
-        DatePickerCustom(
-            title = stringResource(id = R.string.expirationDate),
-            date = product.expiry_date,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        )
+        item {
 
-        if (state.type == ProductViewModel.TYPES.CREATE) {
-            if (otherProductsState.isLoading) {
-                Box(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(
+                        LocalContext.current
+                    ).data(product.image_url)
+                        .crossfade(true).build(),
+                    contentDescription = product.product_name,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(192.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                        .padding(8.dp)
+                        .size(160.dp),
+                )
+                product.barcode?.let {
+                    Text(
+                        it,
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            }
+
+            OutlineTextFieldCustom(
+                value = product.product_name ?: "",
+                title = stringResource(id = R.string.productName),
+                onValueChange = {
+                    viewModel.onEvent(ProductAddEvent.EnteredName(it))
+                },
+                error = state.nameError.asString(context),
+            )
+
+            if (state.type == ProductViewModel.TYPES.CREATE) {
+                QuantityComponent(
+                    value = viewModel.state.value.quantity,
+                    title = stringResource(id = R.string.productQuantity),
+                    onValueChange = {
+                        viewModel.onEvent(ProductAddEvent.EnteredQuantity(it))
+                    },
+                    onDecreaseQuantity = {
+                        viewModel.onEvent(ProductAddEvent.DecreaseQuantity)
+                    },
+                    onIncreaseQuantity = {
+                        viewModel.onEvent(ProductAddEvent.IncreaseQuantity)
+                    },
+                )
+            }
+            DatePickerCustom(
+                title = stringResource(id = R.string.expirationDate),
+                date = product.expiry_date,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
+
+            OutlineTextFieldCustom(
+                value = product.note ?: "",
+                title = stringResource(id = R.string.addProductNote),
+                singleLine = false,
+                onValueChange = {
+                    viewModel.onEvent(ProductAddEvent.EnteredNote(it))
+                },
+                error = state.nameError.asString(context),
+            )
+
+            if (state.type == ProductViewModel.TYPES.CREATE) {
+                if (otherProductsState.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(192.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+
+                    return@item
                 }
 
-                return
-            }
+                if (otherProductsState.hasError) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(192.dp),
+                        contentAlignment = Alignment.Center
+                    ) { Text(text = otherProductsState.errorMessage.asString(context)) }
 
-            if (otherProductsState.hasError) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(192.dp),
-                    contentAlignment = Alignment.Center
-                ) { Text(text = otherProductsState.errorMessage.asString(context)) }
-
-            }
-            val products = otherProductsState.products
-            if (products.isNotEmpty()) {
-                Text(
-                    text = stringResource(id = R.string.productsAlreadySaved),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                LazyColumn {
-                    items(products.size) { index ->
-                        ProductItem(
-                            product = products[index],
-                            size = 60.dp
-                        )
+                }
+                val products = otherProductsState.products
+                if (products.isNotEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.productsAlreadySaved),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                    LazyColumn {
+                        items(products.size) { index ->
+                            ProductItem(
+                                product = products[index],
+                                size = 60.dp
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        if (state.type == ProductViewModel.TYPES.UPDATE) {
-            if (product.consumed && product.consumed_at != null) {
-                Text(
-                    text = stringResource(
-                        id = R.string.consumedAt,
-                        SimpleDateFormat(
-                            "dd/MM/yyyy",
-                            Locale.getDefault()
-                        ).format(product.consumed_at?.epochSeconds),
-                    ),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            } else {
-                Button(onClick = { viewModel.onEvent(ProductAddEvent.Consume) }) {
-                    Text(text = stringResource(id = R.string.retire))
+            if (state.type == ProductViewModel.TYPES.UPDATE) {
+                Box(
+                    modifier = Modifier.padding(vertical = 16.dp),
+                ) {
+                    if (product.consumed && product.consumed_at != null) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.consumedAt,
+                                SimpleDateFormat(
+                                    "dd/MM/yyyy",
+                                    Locale.getDefault()
+                                ).format(product.consumed_at?.epochSeconds),
+                            ),
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    } else {
+                        Button(
+                            onClick = { viewModel.onEvent(ProductAddEvent.Consume) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(text = stringResource(id = R.string.retire))
+                        }
+                    }
                 }
             }
         }

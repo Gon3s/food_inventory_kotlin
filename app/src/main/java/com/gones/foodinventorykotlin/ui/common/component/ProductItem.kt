@@ -1,13 +1,13 @@
 package com.gones.foodinventorykotlin.ui.common.component
 
 import android.text.format.DateFormat
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -33,23 +33,24 @@ fun ProductItem(
         stringResource(R.string.no_expiry_date)
     }
 
-    Box(modifier = modifier) {
-        Row {
-            AsyncImage(
-                model = ImageRequest.Builder(
-                    LocalContext.current
-                ).data(product.image_url)
-                    .crossfade(true).build(),
-                contentDescription = product.product_name,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(size)
-            )
-            Column {
-                product.brands?.let { Text(text = it, fontSize = 16.sp) }
-                Text(text = product.product_name ?: "", fontSize = 18.sp)
-                Text(text = expiryDate, fontSize = 16.sp)
-            }
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(
+                LocalContext.current
+            ).data(product.image_url)
+                .crossfade(true).build(),
+            contentDescription = product.product_name,
+            modifier = Modifier
+                .padding(8.dp)
+                .size(size)
+        )
+        Column {
+            Text(text = product.product_name ?: "", fontSize = 18.sp)
+            Text(text = expiryDate, fontSize = 16.sp)
         }
     }
+
 }

@@ -2,7 +2,7 @@ package com.gones.foodinventorykotlin.ui.product
 
 sealed class ProductAddEvent {
     data class EnteredName(val name: String) : ProductAddEvent()
-    data class EnteredBrands(val brands: String) : ProductAddEvent()
+    data class EnteredNote(val note: String) : ProductAddEvent()
     data class EnteredQuantity(val quantity: Int) : ProductAddEvent()
     object DecreaseQuantity : ProductAddEvent()
     object IncreaseQuantity : ProductAddEvent()

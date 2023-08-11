@@ -20,5 +20,3 @@ data class Product(
     var consumed_at: Instant? = null,
     var note: String? = null,
 )
-
-class InvalidProductException(message: String) : Exception(message)
