@@ -20,7 +20,18 @@ class ProductRepositoryImpl(
 ) : ProductRepository {
     override suspend fun getProductByEanWS(barcode: String): ProductResult {
         val productResultResponse = remoteApi.getProduct(barcode)
-        return productResultResponse.toModel()
+
+        return if (productResultResponse.product != null) {
+            productResultResponse.toModel()
+
+        } else {
+            ProductResult(
+                status = productResultResponse.status,
+                product = Product(
+                    barcode = barcode,
+                ),
+            )
+        }
     }
 
     override fun getProducts(): Flow<List<Product>> = flow {

@@ -161,7 +161,7 @@ fun ScanScreen(
                         .padding(bottom = 16.dp)
                 ) {
                     Button(
-                        onClick = { navController.navigate("product") }
+                        onClick = { navController.navigate("product") { popUpTo(HomeRoute) } }
                     ) {
                         Text(text = stringResource(id = R.string.add_without_barcode))
                     }
