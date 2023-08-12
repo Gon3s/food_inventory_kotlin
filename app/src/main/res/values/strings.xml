@@ -27,4 +27,6 @@
     <string name="forgot_password">Mot de passe oublié ?</string>
     <string name="login">Se connecter</string>
     <string name="register_title">Création d\'un compte</string>
+    <string name="register_ok">Le compte a bien été créé. Connectez-vous maintenant !</string>
+    <string name="login_ok">Vous êtes connecté(e) !</string>
 </resources>

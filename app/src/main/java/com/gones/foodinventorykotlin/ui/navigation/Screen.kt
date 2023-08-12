@@ -3,7 +3,6 @@ package com.gones.foodinventorykotlin.ui.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.gones.foodinventorykotlin.R
 import kotlinx.coroutines.flow.Flow
@@ -14,11 +13,11 @@ const val HomeRoute = "home"
 const val ScanRoute = "scan"
 const val ProductRoute = "product?barcode={barcode}&id={id}"
 const val LoginRoute = "login"
-const val SignupRoute = "signUp"
+const val RegisterRoute = "register"
 
 class MenuItem(
     val onClick: (() -> Unit),
-    val icon: ImageVector,
+    val icon: Int,
     val contentDescription: String? = null,
 )
 
@@ -48,15 +47,24 @@ sealed interface Screen {
         override val title: Int = R.string.app_name
         override val floatingActionIcon: ImageVector = Icons.Filled.Add
         override val floatingActionIconClick: (() -> Unit) = {
-            _actions.tryEmit(FloationActionIcons.ScanIcon)
+            _actions.tryEmit(AppBarIcons.ScanIcon)
+        }
+        override val actionsMenu: List<MenuItem> = listOf(
+            MenuItem(
+                onClick = {
+                    _actions.tryEmit(AppBarIcons.Logout)
+                },
+                icon = R.drawable.ic_logout
+            )
+        )
+
+        enum class AppBarIcons {
+            ScanIcon,
+            Logout
         }
 
-        enum class FloationActionIcons {
-            ScanIcon
-        }
-
-        private val _actions = MutableSharedFlow<FloationActionIcons>(extraBufferCapacity = 1)
-        val actions: Flow<FloationActionIcons> = _actions.asSharedFlow()
+        private val _actions = MutableSharedFlow<AppBarIcons>(extraBufferCapacity = 1)
+        val actions: Flow<AppBarIcons> = _actions.asSharedFlow()
     }
 
     class Scan : Screen {
@@ -89,7 +97,7 @@ sealed interface Screen {
                 onClick = {
                     _actions.tryEmit(AppBarIcons.Save)
                 },
-                icon = Icons.Default.Done
+                icon = R.drawable.ic_done
             )
         )
 
@@ -103,7 +111,7 @@ sealed interface Screen {
     }
 
     class SignUp : Screen {
-        override val route: String = SignupRoute
+        override val route: String = RegisterRoute
         override val isAppBarVisible: Boolean = true
         override val title: Int = R.string.sign_up
         override val navigationIcon: ImageVector = Icons.Default.ArrowBack
@@ -131,7 +139,7 @@ fun getScreen(route: String?): Screen? {
         ScanRoute -> Screen.Scan()
         ProductRoute -> Screen.Product()
         LoginRoute -> Screen.Login()
-        SignupRoute -> Screen.SignUp()
+        RegisterRoute -> Screen.SignUp()
         else -> null
     }
 }

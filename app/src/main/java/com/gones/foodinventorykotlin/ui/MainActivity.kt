@@ -5,7 +5,6 @@ package com.gones.foodinventorykotlin.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,16 +29,18 @@ import com.gones.foodinventorykotlin.ui.login.LoginScreen
 import com.gones.foodinventorykotlin.ui.navigation.HomeRoute
 import com.gones.foodinventorykotlin.ui.navigation.LoginRoute
 import com.gones.foodinventorykotlin.ui.navigation.ProductRoute
+import com.gones.foodinventorykotlin.ui.navigation.RegisterRoute
 import com.gones.foodinventorykotlin.ui.navigation.ScanRoute
-import com.gones.foodinventorykotlin.ui.navigation.SignupRoute
 import com.gones.foodinventorykotlin.ui.product.ProductScreen
 import com.gones.foodinventorykotlin.ui.register.RegisterScreen
 import com.gones.foodinventorykotlin.ui.scan.ScanScreen
 import com.gones.foodinventorykotlin.ui.theme.FoodInventoryTheme
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalMaterial3Api
-class MainActivity : ComponentActivity() {
-    private val viewModel: MainViewModel by viewModels()
+class MainActivity(
+) : ComponentActivity() {
+    private val viewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,24 +80,26 @@ class MainActivity : ComponentActivity() {
                     ) { paddingValues ->
                         NavHost(
                             navController = navController,
-                            startDestination = LoginRoute,
+                            startDestination = viewModel.defaultRoute,
                             Modifier.padding(paddingValues)
                         ) {
                             composable(HomeRoute) {
                                 HomeScreen(
                                     appBarState = appBarState,
+                                    snackbarHostState = snackbarHostState,
                                     navController = navController
                                 )
                             }
                             composable(LoginRoute) {
                                 LoginScreen(
-                                    appBarState = appBarState,
+                                    snackbarHostState = snackbarHostState,
                                     navController = navController
                                 )
                             }
-                            composable(SignupRoute) {
+                            composable(RegisterRoute) {
                                 RegisterScreen(
                                     appBarState = appBarState,
+                                    snackbarHostState = snackbarHostState,
                                     navController = navController
                                 )
                             }
