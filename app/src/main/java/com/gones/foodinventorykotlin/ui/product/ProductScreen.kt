@@ -130,7 +130,6 @@ fun ProductScreen(
             .padding(horizontal = 16.dp)
     ) {
         item {
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,9 +197,12 @@ fun ProductScreen(
                 },
                 error = state.nameError.asString(context),
             )
+        }
 
-            if (state.type == ProductViewModel.TYPES.CREATE) {
-                if (otherProductsState.isLoading) {
+        if (state.type == ProductViewModel.TYPES.CREATE) {
+            if (otherProductsState.isLoading) {
+
+                item {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -212,36 +214,42 @@ fun ProductScreen(
 
                     return@item
                 }
+            }
 
-                if (otherProductsState.hasError) {
+            if (otherProductsState.hasError) {
+
+                item {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(192.dp),
                         contentAlignment = Alignment.Center
                     ) { Text(text = otherProductsState.errorMessage.asString(context)) }
-
                 }
-                val products = otherProductsState.products
-                if (products.isNotEmpty()) {
+            }
+            val products = otherProductsState.products
+            if (products.isNotEmpty()) {
+
+                item {
                     Text(
                         text = stringResource(id = R.string.productsAlreadySaved),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(top = 16.dp)
                     )
-                    LazyColumn {
-                        items(products.size) { index ->
-                            ProductItem(
-                                product = products[index],
-                                size = 60.dp
-                            )
-                        }
-                    }
                 }
-            }
+                items(products.size) { index ->
+                    ProductItem(
+                        product = products[index],
+                        size = 60.dp
+                    )
+                }
 
-            if (state.type == ProductViewModel.TYPES.UPDATE) {
+            }
+        }
+
+        if (state.type == ProductViewModel.TYPES.UPDATE) {
+            item {
                 Box(
                     modifier = Modifier.padding(vertical = 16.dp),
                 ) {

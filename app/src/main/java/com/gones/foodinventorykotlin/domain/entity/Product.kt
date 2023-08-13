@@ -19,4 +19,5 @@ data class Product(
     @Serializable(with = InstantIso8601Serializer::class)
     var consumed_at: Instant? = null,
     var note: String? = null,
+    var user_id: String? = null,
 )
