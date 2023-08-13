@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class MainViewModel(
     private val authentificationUseCase: AuthentificationUseCase,
@@ -26,6 +27,11 @@ class MainViewModel(
                 defaultRoute = when (sessionStatus) {
                     is SessionStatus.Authenticated -> {
                         HomeRoute
+                    }
+
+                    is SessionStatus.LoadingFromStorage -> {
+                        Timber.e("DLOG: LoadingFromStorage")
+                        return@collectLatest
                     }
 
                     else -> {

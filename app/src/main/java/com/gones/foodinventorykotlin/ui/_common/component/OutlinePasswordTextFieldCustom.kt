@@ -2,6 +2,7 @@ package com.gones.foodinventorykotlin.ui._common.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -30,6 +32,8 @@ fun OutlinePasswordTextFieldCustom(
     singleLine: Boolean = true,
     error: String? = null,
     onValueChange: (String) -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    imeAction: ImeAction = ImeAction.Default,
 ) {
     var passwordVisibility: Boolean by remember { mutableStateOf(false) }
 
@@ -43,7 +47,11 @@ fun OutlinePasswordTextFieldCustom(
             .fillMaxWidth(),
         placeholder = { Text(text = title) },
         isError = !error.isNullOrEmpty(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = imeAction
+        ),
+        keyboardActions = keyboardActions,
         trailingIcon = {
             IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
                 Icon(
