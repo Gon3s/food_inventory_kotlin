@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.register
+package com.gones.foodinventorykotlin.ui.auth.register
 
 sealed class RegisterEvent {
     data class EnteredEmail(val email: String) : RegisterEvent()

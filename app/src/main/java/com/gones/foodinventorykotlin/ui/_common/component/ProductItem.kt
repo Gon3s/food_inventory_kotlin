@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.common.component
+package com.gones.foodinventorykotlin.ui._common.component
 
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Column

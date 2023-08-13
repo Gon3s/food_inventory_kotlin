@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.theme
+package com.gones.foodinventorykotlin.ui._common.theme
 
 import android.app.Activity
 import android.os.Build

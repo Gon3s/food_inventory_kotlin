@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.common.extension
+package com.gones.foodinventorykotlin.ui._common.extension
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -21,20 +21,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.gones.foodinventorykotlin.ui.common.component.FoodInventoryFloatingButton
-import com.gones.foodinventorykotlin.ui.common.component.FoodInventoryTopAppBar
-import com.gones.foodinventorykotlin.ui.common.rememberAppBarState
+import com.gones.foodinventorykotlin.ui._common.component.FoodInventoryFloatingButton
+import com.gones.foodinventorykotlin.ui._common.component.FoodInventoryTopAppBar
+import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.ProductRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.RegisterRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.ScanRoute
+import com.gones.foodinventorykotlin.ui._common.rememberAppBarState
+import com.gones.foodinventorykotlin.ui._common.theme.FoodInventoryTheme
+import com.gones.foodinventorykotlin.ui.auth.login.LoginScreen
+import com.gones.foodinventorykotlin.ui.auth.register.RegisterScreen
 import com.gones.foodinventorykotlin.ui.home.HomeScreen
-import com.gones.foodinventorykotlin.ui.login.LoginScreen
-import com.gones.foodinventorykotlin.ui.navigation.HomeRoute
-import com.gones.foodinventorykotlin.ui.navigation.LoginRoute
-import com.gones.foodinventorykotlin.ui.navigation.ProductRoute
-import com.gones.foodinventorykotlin.ui.navigation.RegisterRoute
-import com.gones.foodinventorykotlin.ui.navigation.ScanRoute
 import com.gones.foodinventorykotlin.ui.product.ProductScreen
-import com.gones.foodinventorykotlin.ui.register.RegisterScreen
 import com.gones.foodinventorykotlin.ui.scan.ScanScreen
-import com.gones.foodinventorykotlin.ui.theme.FoodInventoryTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalMaterial3Api

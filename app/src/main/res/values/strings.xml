@@ -29,4 +29,8 @@
     <string name="register_title">Création d\'un compte</string>
     <string name="register_ok">Le compte a bien été créé. Connectez-vous maintenant !</string>
     <string name="login_ok">Vous êtes connecté(e) !</string>
+    <string name="email_not_blank">L\'email ne doit pas être vide</string>
+    <string name="email_invalid">L\'email n\'est pas valide</string>
+    <string name="password_too_short">Le mot de passe doit contenir au mois %d caractères</string>
+    <string name="loading">En cours...</string>
 </resources>

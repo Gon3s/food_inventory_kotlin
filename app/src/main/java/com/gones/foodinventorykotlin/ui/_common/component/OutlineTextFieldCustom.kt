@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.common.component
+package com.gones.foodinventorykotlin.ui._common.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,7 +8,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -37,9 +36,8 @@ fun OutlineTextFieldCustom(
     )
 
     if (!error.isNullOrEmpty()) {
-        Text(
-            text = error,
-            color = Color.Red
+        ErrorTextField(
+            error = error,
         )
     }
 }

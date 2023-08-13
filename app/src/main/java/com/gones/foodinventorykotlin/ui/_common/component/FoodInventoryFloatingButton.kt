@@ -1,10 +1,10 @@
-package com.gones.foodinventorykotlin.ui.common.component
+package com.gones.foodinventorykotlin.ui._common.component
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import com.gones.foodinventorykotlin.ui.common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.AppBarState
 import timber.log.Timber
 
 

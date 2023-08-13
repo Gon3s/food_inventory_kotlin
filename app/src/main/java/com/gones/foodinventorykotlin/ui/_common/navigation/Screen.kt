@@ -1,4 +1,4 @@
-package com.gones.foodinventorykotlin.ui.navigation
+package com.gones.foodinventorykotlin.ui._common.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add

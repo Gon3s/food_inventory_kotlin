@@ -2,8 +2,8 @@ package com.gones.foodinventorykotlin.ui
 
 import androidx.lifecycle.ViewModel
 import com.gones.foodinventorykotlin.domain.usecase.AuthentificationUseCase
-import com.gones.foodinventorykotlin.ui.navigation.HomeRoute
-import com.gones.foodinventorykotlin.ui.navigation.LoginRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
