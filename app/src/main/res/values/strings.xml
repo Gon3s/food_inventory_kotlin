@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Food Inventory</string>
+    <string name="app_name" translatable="false">Food Inventory</string>
     <string name="no_expiry_date">Pas de date d\'expiration</string>
     <string name="productName">Nom du produit</string>
     <string name="brands">Marque du produit</string>
@@ -18,4 +18,20 @@
     <string name="save">Enregistrer</string>
     <string name="quantity_must_be_positive">The quantity must be positive and not empty.</string>
     <string name="addProductNote">Ajouter une note</string>
+    <string name="sign_up">S\'inscrire</string>
+    <string name="login_title">Bon retour</string>
+    <string name="login_subtitle">Connectez-vous à votre compte</string>
+    <string name="email">Email</string>
+    <string name="password">Mot de passe</string>
+    <string name="register">S\'inscrire</string>
+    <string name="forgot_password">Mot de passe oublié ?</string>
+    <string name="login">Se connecter</string>
+    <string name="register_title">S\'inscrire</string>
+    <string name="register_subtitle">Créez votre compte</string>
+    <string name="register_ok">Le compte a bien été créé. Connectez-vous maintenant !</string>
+    <string name="login_ok">Vous êtes connecté(e) !</string>
+    <string name="email_not_blank">L\'email ne doit pas être vide</string>
+    <string name="email_invalid">L\'email n\'est pas valide</string>
+    <string name="password_too_short">Le mot de passe doit contenir au mois %d caractères</string>
+    <string name="loading">En cours...</string>
 </resources>

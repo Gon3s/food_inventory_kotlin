@@ -40,9 +40,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.R
-import com.gones.foodinventorykotlin.ui.common.AppBarState
-import com.gones.foodinventorykotlin.ui.common.HomeRoute
-import com.gones.foodinventorykotlin.ui.common.Screen
+import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.Screen
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber

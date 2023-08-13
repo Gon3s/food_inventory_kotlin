@@ -3,7 +3,10 @@ package com.gones.foodinventorykotlin.data.network
 import com.gones.foodinventorykotlin.BuildConfig
 import com.squareup.moshi.Moshi
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.FlowType
+import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.postgrest.Postgrest
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -27,9 +30,15 @@ fun wsHttpClient(): OkHttpClient =
         .addNetworkInterceptor(HttpLoggingInterceptor().setLevel(if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE))
         .build()
 
+@OptIn(SupabaseExperimental::class)
 fun initSupabaseClient(): SupabaseClient = createSupabaseClient(
     BuildConfig.SUPABASE_URL,
     BuildConfig.SUPABASE_KEY
 ) {
     install(Postgrest)
+    install(GoTrue) {
+        flowType = FlowType.PKCE
+        scheme = "app"
+        host = "supabase.com"
+    }
 }
