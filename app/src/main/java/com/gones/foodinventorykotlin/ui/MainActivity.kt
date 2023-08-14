@@ -5,22 +5,33 @@ package com.gones.foodinventorykotlin.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.ui._common.component.FoodInventoryFloatingButton
 import com.gones.foodinventorykotlin.ui._common.component.FoodInventoryTopAppBar
 import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
@@ -28,6 +39,7 @@ import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.ProductRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.RegisterRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.ScanRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.SplashRoute
 import com.gones.foodinventorykotlin.ui._common.rememberAppBarState
 import com.gones.foodinventorykotlin.ui._common.theme.FoodInventoryTheme
 import com.gones.foodinventorykotlin.ui.auth.login.LoginScreen
@@ -59,6 +71,7 @@ class MainActivity(
                 val navController = rememberNavController()
                 val appBarState = rememberAppBarState(navController = navController)
                 val snackbarHostState = remember { SnackbarHostState() }
+                val startDestination = viewModel.defaultRoute.collectAsState().value
 
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -80,9 +93,23 @@ class MainActivity(
                     ) { paddingValues ->
                         NavHost(
                             navController = navController,
-                            startDestination = viewModel.defaultRoute,
+                            startDestination = startDestination,
                             Modifier.padding(paddingValues)
                         ) {
+                            composable(SplashRoute) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(MaterialTheme.colorScheme.primary),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_splash),
+                                        contentDescription = "",
+                                        modifier = Modifier.size(200.dp),
+                                    )
+                                }
+                            }
                             composable(HomeRoute) {
                                 HomeScreen(
                                     appBarState = appBarState,

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
+const val SplashRoute = "splash"
 const val HomeRoute = "home"
 const val ScanRoute = "scan"
 const val ProductRoute = "product?barcode={barcode}&id={id}"
@@ -40,6 +41,11 @@ sealed interface Screen {
         get() = null
     val floatingActionIconClick: (() -> Unit)?
         get() = null
+
+    class Splash : Screen {
+        override val route: String = SplashRoute
+        override val isAppBarVisible: Boolean = false
+    }
 
     class Home : Screen {
         override val route: String = HomeRoute
@@ -135,6 +141,7 @@ sealed interface Screen {
 
 fun getScreen(route: String?): Screen? {
     return when (route) {
+        SplashRoute -> Screen.Splash()
         HomeRoute -> Screen.Home()
         ScanRoute -> Screen.Scan()
         ProductRoute -> Screen.Product()

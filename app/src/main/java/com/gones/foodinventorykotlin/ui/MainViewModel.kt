@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.gones.foodinventorykotlin.domain.usecase.AuthentificationUseCase
 import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
+import com.gones.foodinventorykotlin.ui._common.navigation.SplashRoute
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,12 +20,14 @@ class MainViewModel(
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
 
-    var defaultRoute: String = HomeRoute
+    var defaultRoute = MutableStateFlow(SplashRoute)
+        private set
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
             authentificationUseCase.getSessionStatus().collectLatest { sessionStatus ->
-                defaultRoute = when (sessionStatus) {
+                Timber.e("DLOG: sessionStatus: ${sessionStatus.let { it::class.simpleName }}")
+                defaultRoute.value = when (sessionStatus) {
                     is SessionStatus.Authenticated -> {
                         HomeRoute
                     }
