@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Category(
-    var id: Int,
-    var name: String,
+    var id: Int = 0,
+    var name: String = "",
     @Serializable(with = InstantIso8601Serializer::class)
     var created_at: Instant? = null,
     var user_id: String? = null,

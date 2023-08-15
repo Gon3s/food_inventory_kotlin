@@ -79,7 +79,7 @@ fun ScanScreen(
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             when (action) {
-                Screen.Scan.AppBarIcons.NavigationIcon -> {
+                Screen.Scan.Actions.NavigationIcon -> {
                     navController.popBackStack()
                 }
             }

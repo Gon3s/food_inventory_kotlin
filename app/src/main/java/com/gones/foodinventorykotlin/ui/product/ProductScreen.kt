@@ -91,11 +91,11 @@ fun ProductScreen(
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             when (action) {
-                Screen.Product.AppBarIcons.NavigationIcon -> {
+                Screen.Product.Actions.NavigationIcon -> {
                     navController.popBackStack()
                 }
 
-                Screen.Product.AppBarIcons.Save -> {
+                Screen.Product.Actions.Save -> {
                     viewModel.onEvent(ProductAddEvent.SaveProduct)
                 }
             }

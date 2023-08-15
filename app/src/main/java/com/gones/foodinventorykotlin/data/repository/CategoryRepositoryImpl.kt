@@ -11,12 +11,20 @@ import kotlinx.coroutines.flow.flow
 class CategoryRepositoryImpl(
     private val supabaseClient: SupabaseClient,
 ) : CategoryRepository {
-    override suspend fun getAllCategories(): Flow<List<Category>> = flow {
+    override fun getAllCategories(): Flow<List<Category>> = flow {
         val categories = supabaseClient.postgrest["category"].select {
             Category::user_id eq supabaseClient.gotrue.currentUserOrNull()?.id
         }.decodeList<Category>()
 
         emit(categories)
+    }
+
+    override fun getCategoryByName(name: String): Flow<Category?> = flow {
+        val category = supabaseClient.postgrest["category"].select {
+            Category::name eq name
+        }
+
+        emit(category.decodeAsOrNull<Category>())
     }
 
     override suspend fun insertCategory(category: Category) {
@@ -33,6 +41,9 @@ class CategoryRepositoryImpl(
     }
 
     override suspend fun deleteCategory(category: Category) {
+        // Todo: Error message when category is not empty
+        // Todo: Add confirmation dialog
+
         supabaseClient.postgrest["category"].delete {
             Category::id eq category.id
         }

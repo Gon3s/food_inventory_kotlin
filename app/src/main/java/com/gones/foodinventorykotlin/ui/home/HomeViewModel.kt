@@ -1,6 +1,5 @@
 package com.gones.foodinventorykotlin.ui.home
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,8 +19,8 @@ class HomeViewModel(
     private val productUseCase: ProductUseCase,
     private val authentificationUseCase: AuthentificationUseCase,
 ) : ViewModel() {
-    private val _state = mutableStateOf(HomeState())
-    val state: State<HomeState> = _state
+    var state = mutableStateOf(HomeState())
+        private set
 
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set
@@ -31,7 +30,7 @@ class HomeViewModel(
     fun getProducts() {
         getProductsJob?.cancel()
         getProductsJob = productUseCase.getProducts().onEach { products ->
-            _state.value = state.value.copy(products = products)
+            state.value = state.value.copy(products = products)
         }.launchIn(viewModelScope)
     }
 

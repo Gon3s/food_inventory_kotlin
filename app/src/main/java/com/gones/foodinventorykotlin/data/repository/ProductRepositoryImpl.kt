@@ -36,9 +36,6 @@ class ProductRepositoryImpl(
     }
 
     override fun getProducts(): Flow<List<Product>> = flow {
-        val user_id = supabaseClient.gotrue.currentUserOrNull()?.id
-        Timber.e("DLOG: user_id: $user_id")
-
         val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 Product::consumed eq false

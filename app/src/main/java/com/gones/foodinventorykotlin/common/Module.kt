@@ -18,6 +18,7 @@ import com.gones.foodinventorykotlin.ui.MainViewModel
 import com.gones.foodinventorykotlin.ui.auth.login.LoginViewModel
 import com.gones.foodinventorykotlin.ui.auth.register.RegisterViewModel
 import com.gones.foodinventorykotlin.ui.home.HomeViewModel
+import com.gones.foodinventorykotlin.ui.manageCategories.ManageCategoriesViewModel
 import com.gones.foodinventorykotlin.ui.product.ProductViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
@@ -44,6 +45,7 @@ val viewModelModule: Module = module {
             id = id
         )
     }
+    viewModel { ManageCategoriesViewModel(get()) }
 }
 
 val useCaseModule: Module = module {

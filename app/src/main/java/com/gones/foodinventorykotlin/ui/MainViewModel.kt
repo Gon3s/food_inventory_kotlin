@@ -26,7 +26,7 @@ class MainViewModel(
     init {
         CoroutineScope(Dispatchers.IO).launch {
             authentificationUseCase.getSessionStatus().collectLatest { sessionStatus ->
-                Timber.e("DLOG: sessionStatus: ${sessionStatus.let { it::class.simpleName }}")
+                Timber.d("DLOG: sessionStatus: ${sessionStatus.let { it::class.simpleName }}")
                 defaultRoute.value = when (sessionStatus) {
                     is SessionStatus.Authenticated -> {
                         HomeRoute

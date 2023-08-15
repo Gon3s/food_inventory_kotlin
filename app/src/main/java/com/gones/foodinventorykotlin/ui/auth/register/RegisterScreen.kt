@@ -78,7 +78,7 @@ fun RegisterScreen(
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             when (action) {
-                Screen.SignUp.AppBarIcons.NavigationIcon -> {
+                Screen.SignUp.Actions.NavigationIcon -> {
                     navController.popBackStack()
                 }
             }
