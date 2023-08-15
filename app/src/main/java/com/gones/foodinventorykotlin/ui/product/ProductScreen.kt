@@ -29,7 +29,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gones.foodinventorykotlin.R
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import com.gones.foodinventorykotlin.ui._common.component.OutlineTextFieldCustom
 import com.gones.foodinventorykotlin.ui._common.component.ProductItem
 import com.gones.foodinventorykotlin.ui._common.navigation.Screen
@@ -49,7 +49,7 @@ import java.util.Locale
 @ExperimentalMaterial3Api
 @Composable
 fun ProductScreen(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
     barcode: String? = null,
     id: String? = null,
     snackbarHostState: SnackbarHostState,
@@ -87,7 +87,7 @@ fun ProductScreen(
         }
     }
 
-    val screen = appBarState.currentScreen as? Screen.Product
+    val screen = scaffoldState.currentScreen as? Screen.Product
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             when (action) {

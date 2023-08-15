@@ -4,10 +4,13 @@ import com.gones.foodinventorykotlin.data.api.RemoteApi
 import com.gones.foodinventorykotlin.data.network.createApiClient
 import com.gones.foodinventorykotlin.data.network.initSupabaseClient
 import com.gones.foodinventorykotlin.data.repository.AuthenticationRepositoryImpl
+import com.gones.foodinventorykotlin.data.repository.CategoryRepositoryImpl
 import com.gones.foodinventorykotlin.data.repository.ProductRepositoryImpl
 import com.gones.foodinventorykotlin.domain.repository.AuthenticationRepository
+import com.gones.foodinventorykotlin.domain.repository.CategoryRepository
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import com.gones.foodinventorykotlin.domain.usecase.AuthentificationUseCase
+import com.gones.foodinventorykotlin.domain.usecase.CategoryUseCase
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import com.gones.foodinventorykotlin.domain.usecase.validations.ValidateEmail
 import com.gones.foodinventorykotlin.domain.usecase.validations.ValidatePassword
@@ -48,6 +51,7 @@ val useCaseModule: Module = module {
     single { ValidatePassword() }
     single { ProductUseCase(productRepository = get()) }
     single { AuthentificationUseCase(authenticationRepository = get()) }
+    single { CategoryUseCase(categoryRepository = get()) }
 }
 
 val repositoryModule: Module = module {
@@ -61,6 +65,11 @@ val repositoryModule: Module = module {
         AuthenticationRepositoryImpl(
             supabaseClient = get()
         ) as AuthenticationRepository
+    }
+    single {
+        CategoryRepositoryImpl(
+            supabaseClient = get()
+        ) as CategoryRepository
     }
 }
 

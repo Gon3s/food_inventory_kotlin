@@ -14,16 +14,16 @@ class ProductUseCase(
         productRepository.getProductByEanWS(barcode).product?.let { emit(it) }
     }
 
-    suspend fun addProduct(product: Product, quantity: Int): ProductResult {
+    suspend fun addProduct(product: Product, quantity: Int): SupabaseResult {
         if (product.product_name?.isBlank() == true) {
-            return ProductResult(
+            return SupabaseResult(
                 successful = false,
-                errorMessage = UiText.StringResource(R.string.name_is_required)
+                errorMessage = UiText.StringResource(R.string.product_name_is_required)
             )
         }
 
         if (quantity < 1) {
-            return ProductResult(
+            return SupabaseResult(
                 successful = false,
                 errorMessage = UiText.StringResource(R.string.quantity_must_be_positive)
             )
@@ -33,20 +33,27 @@ class ProductUseCase(
             productRepository.insertProduct(product)
         }
 
-        return ProductResult(successful = true)
+        return SupabaseResult(successful = true)
     }
 
-    suspend fun updateProduct(product: Product): ProductResult {
+    suspend fun updateProduct(product: Product): SupabaseResult {
         if (product.product_name?.isBlank() == true) {
-            return ProductResult(
+            return SupabaseResult(
                 successful = false,
-                errorMessage = UiText.StringResource(R.string.name_is_required)
+                errorMessage = UiText.StringResource(R.string.product_name_is_required)
             )
         }
 
-        productRepository.updateProduct(product)
+        try {
+            productRepository.updateProduct(product)
+        } catch (e: Exception) {
+            return SupabaseResult(
+                successful = false,
+                errorMessage = UiText.StringResource(R.string.an_error_occured)
+            )
+        }
 
-        return ProductResult(successful = true)
+        return SupabaseResult(successful = true)
     }
 
     fun getProducts(): Flow<List<Product>> = productRepository.getProducts()

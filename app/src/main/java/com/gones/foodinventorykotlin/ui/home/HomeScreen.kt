@@ -13,7 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import com.gones.foodinventorykotlin.ui._common.component.ProductItem
 import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
@@ -28,7 +28,7 @@ import timber.log.Timber
 
 @Composable
 fun HomeScreen(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
     snackbarHostState: SnackbarHostState,
     navController: NavController,
     viewModel: HomeViewModel = koinViewModel(),
@@ -41,7 +41,7 @@ fun HomeScreen(
         viewModel.getProducts()
     }
 
-    val screen = appBarState.currentScreen as? Screen.Home
+    val screen = scaffoldState.currentScreen as? Screen.Home
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             Timber.d("DLOG: HomeScreen : ScanIcon : action : $action")

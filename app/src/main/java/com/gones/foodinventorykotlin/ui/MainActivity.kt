@@ -80,15 +80,15 @@ class MainActivity(
                     Scaffold(
                         snackbarHost = { SnackbarHost(snackbarHostState) },
                         topBar = {
-                            if (appBarState.isVisible) {
+                            if (appBarState.isAppBarVisible) {
                                 FoodInventoryTopAppBar(
-                                    appBarState = appBarState,
+                                    scaffoldState = appBarState,
                                     modifier = Modifier.fillMaxWidth(),
                                 )
                             }
                         },
                         floatingActionButton = {
-                            FoodInventoryFloatingButton(appBarState = appBarState)
+                            FoodInventoryFloatingButton(scaffoldState = appBarState)
                         },
                     ) { paddingValues ->
                         NavHost(
@@ -112,7 +112,7 @@ class MainActivity(
                             }
                             composable(HomeRoute) {
                                 HomeScreen(
-                                    appBarState = appBarState,
+                                    scaffoldState = appBarState,
                                     snackbarHostState = snackbarHostState,
                                     navController = navController
                                 )
@@ -125,13 +125,16 @@ class MainActivity(
                             }
                             composable(RegisterRoute) {
                                 RegisterScreen(
-                                    appBarState = appBarState,
+                                    scaffoldState = appBarState,
                                     snackbarHostState = snackbarHostState,
                                     navController = navController
                                 )
                             }
                             composable(ScanRoute) {
-                                ScanScreen(appBarState = appBarState, navController = navController)
+                                ScanScreen(
+                                    scaffoldState = appBarState,
+                                    navController = navController
+                                )
                             }
                             composable(
                                 ProductRoute, arguments = listOf(
@@ -148,7 +151,7 @@ class MainActivity(
                                 )
                             ) {
                                 ProductScreen(
-                                    appBarState = appBarState,
+                                    scaffoldState = appBarState,
                                     snackbarHostState = snackbarHostState,
                                     navController = navController,
                                     barcode = it.arguments?.getString("barcode"),

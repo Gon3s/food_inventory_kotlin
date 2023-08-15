@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.common.UiText
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import com.gones.foodinventorykotlin.ui._common.component.OutlinePasswordTextFieldCustom
 import com.gones.foodinventorykotlin.ui._common.component.OutlineTextFieldCustom
 import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
@@ -40,7 +40,7 @@ import org.koin.androidx.compose.koinViewModel
 @ExperimentalMaterial3Api
 @Composable
 fun RegisterScreen(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
     viewModel: RegisterViewModel = koinViewModel(),
@@ -74,7 +74,7 @@ fun RegisterScreen(
         }
     }
 
-    val screen = appBarState.currentScreen as? Screen.SignUp
+    val screen = scaffoldState.currentScreen as? Screen.SignUp
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             when (action) {

@@ -4,17 +4,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodInventoryFloatingButton(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
 ) {
-    appBarState.floatingActionIcon?.let { floatingActionIcon ->
-        val callback = appBarState.floatingActionIconClick
+    scaffoldState.floatingActionIcon?.let { floatingActionIcon ->
+        val callback = scaffoldState.floatingActionIconClick
         FloatingActionButton(
             onClick = {
                 Timber.d("DLOG: FoodInventoryFloatingButton: onClick")
@@ -23,7 +23,7 @@ fun FoodInventoryFloatingButton(
         ) {
             Icon(
                 floatingActionIcon,
-                contentDescription = appBarState.floatingActionContentDescription
+                contentDescription = scaffoldState.floatingActionContentDescription
             )
         }
     }

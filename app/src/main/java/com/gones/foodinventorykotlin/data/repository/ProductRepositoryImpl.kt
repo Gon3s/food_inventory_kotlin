@@ -56,14 +56,14 @@ class ProductRepositoryImpl(
     }
 
     override fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
-        val product = withContext(Dispatchers.IO) {
+        val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 Product::consumed eq false
                 eq("barcode", barcode)
                 Product::user_id eq supabaseClient.gotrue.currentUserOrNull()?.id
             }.decodeList<Product>()
         }
-        emit(product)
+        emit(products)
     }
 
     override fun getProductById(id: Int): Flow<Product> = flow {

@@ -10,18 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodInventoryTopAppBar(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         navigationIcon = {
-            val icon = appBarState.navigationIcon
-            val callback = appBarState.onNavigationIconClick
+            val icon = scaffoldState.navigationIcon
+            val callback = scaffoldState.onNavigationIconClick
 
             if (icon != null) {
                 IconButton(
@@ -31,13 +31,13 @@ fun FoodInventoryTopAppBar(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = appBarState.navigationIconContentDescription,
+                        contentDescription = scaffoldState.navigationIconContentDescription,
                     )
                 }
             }
         },
         title = {
-            val title = appBarState.title
+            val title = scaffoldState.title
             if (title != null) {
                 Text(
                     text = stringResource(id = title),
@@ -47,7 +47,7 @@ fun FoodInventoryTopAppBar(
             }
         },
         actions = {
-            val items = appBarState.actions
+            val items = scaffoldState.actions
             if (items.isNotEmpty()) {
                 items.forEach { item ->
                     IconButton(

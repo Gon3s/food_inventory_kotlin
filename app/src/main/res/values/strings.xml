@@ -11,7 +11,7 @@
     <string name="productsAlreadySaved">Produits déjà enregistrés</string>
     <string name="edit">Editer</string>
     <string name="an_error_occured">Une erreur s\'est produite</string>
-    <string name="name_is_required">Le nom du produit est obligatoire</string>
+    <string name="product_name_is_required">Le nom du produit est obligatoire</string>
     <string name="error_on_save">Impossible d\'enregistrer le produit</string>
     <string name="create_product">Création du produit</string>
     <string name="scan_product">Scanner un produit</string>
@@ -34,4 +34,5 @@
     <string name="email_invalid">L\'email n\'est pas valide</string>
     <string name="password_too_short">Le mot de passe doit contenir au mois %d caractères</string>
     <string name="loading">En cours...</string>
+    <string name="category_name_is_required">Le nom de la catégorie est obligatoire</string>
 </resources>
