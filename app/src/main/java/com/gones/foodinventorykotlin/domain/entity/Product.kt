@@ -18,5 +18,5 @@ data class Product(
     var consumed_at: Instant? = null,
     var note: String? = null,
     var user_id: String? = null,
-    var category_id: Int? = null,
+    var category_id: Int? = null
 )

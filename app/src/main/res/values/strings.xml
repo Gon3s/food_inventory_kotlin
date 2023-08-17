@@ -41,4 +41,5 @@
     <string name="add">Ajouter</string>
     <string name="category_name">Nom de la catégorie</string>
     <string name="category_already_exists">La catégorie existe déjà</string>
+    <string name="category">Catégorie</string>
 </resources>

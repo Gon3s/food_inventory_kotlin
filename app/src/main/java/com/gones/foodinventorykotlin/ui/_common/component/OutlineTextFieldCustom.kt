@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -24,6 +25,7 @@ fun OutlineTextFieldCustom(
     keyboardType: KeyboardType = KeyboardType.Text,
     keyboardActions: KeyboardActions = KeyboardActions(),
     imeAction: ImeAction = ImeAction.Default,
+    capitalization: KeyboardCapitalization = KeyboardCapitalization.Sentences,
     onValueChange: (String) -> Unit,
 ) {
     OutlinedTextField(
@@ -36,7 +38,11 @@ fun OutlineTextFieldCustom(
             .fillMaxWidth(),
         placeholder = { Text(text = title) },
         isError = !error.isNullOrEmpty(),
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = imeAction,
+            capitalization = capitalization
+        ),
         keyboardActions = keyboardActions,
     )
 

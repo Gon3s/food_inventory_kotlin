@@ -11,7 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -156,6 +160,45 @@ fun ProductScreen(
                 }
             }
 
+            if (state.categories.isNotEmpty()) {
+                ExposedDropdownMenuBox(expanded = state.categoryExpanded, onExpandedChange = {
+                    viewModel.onEvent(ProductAddEvent.ExpandedCategory(it))
+                }) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        readOnly = true,
+                        value = state.categories.find { it.id == product.category_id }?.name ?: "",
+                        onValueChange = { },
+                        label = { Text(stringResource(id = R.string.category)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = state.categoryExpanded) },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    )
+                    ExposedDropdownMenu(
+                        expanded = state.categoryExpanded,
+                        onDismissRequest = {
+                            viewModel.onEvent(
+                                ProductAddEvent.ExpandedCategory(
+                                    false
+                                )
+                            )
+                        },
+                    ) {
+                        state.categories.forEach { category ->
+                            DropdownMenuItem(
+                                text = { Text(category.name) },
+                                onClick = {
+                                    viewModel.onEvent(ProductAddEvent.SelectedCategory(category.id))
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            )
+                        }
+                    }
+                }
+            }
+
             OutlineTextFieldCustom(
                 value = product.product_name ?: "",
                 title = stringResource(id = R.string.productName),
@@ -260,7 +303,7 @@ fun ProductScreen(
                                 SimpleDateFormat(
                                     "dd/MM/yyyy",
                                     Locale.getDefault()
-                                ).format(product.consumed_at?.epochSeconds),
+                                ).format(product.consumed_at?.toEpochMilliseconds()),
                             ),
                             modifier = Modifier.padding(vertical = 8.dp)
                         )

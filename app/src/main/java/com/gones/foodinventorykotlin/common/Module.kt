@@ -41,6 +41,7 @@ val viewModelModule: Module = module {
     viewModel { (barcode: String?, id: String?) ->
         ProductViewModel(
             get(),
+            get(),
             barcode = barcode,
             id = id
         )
