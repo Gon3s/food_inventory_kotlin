@@ -8,8 +8,6 @@ import kotlinx.serialization.Serializable
 data class Product(
     val id: Int = 0,
     val barcode: String? = null,
-    var brands: String? = null,
-    var categories: String? = null,
     val image_url: String? = null,
     var product_name: String? = null,
     var expiry_date: Long? = null,
@@ -20,4 +18,5 @@ data class Product(
     var consumed_at: Instant? = null,
     var note: String? = null,
     var user_id: String? = null,
+    var category_id: Int? = null
 )

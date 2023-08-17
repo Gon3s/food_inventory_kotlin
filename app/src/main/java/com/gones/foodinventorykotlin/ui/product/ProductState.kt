@@ -1,6 +1,7 @@
 package com.gones.foodinventorykotlin.ui.product
 
 import com.gones.foodinventorykotlin.common.UiText
+import com.gones.foodinventorykotlin.domain.entity.Category
 import com.gones.foodinventorykotlin.domain.entity.Product
 
 data class ProductState(
@@ -11,6 +12,9 @@ data class ProductState(
 
     val quantity: Int = 1,
     val type: ProductViewModel.TYPES = ProductViewModel.TYPES.CREATE,
+
+    val categories: List<Category> = emptyList(),
+    val categoryExpanded: Boolean = false,
 
     val nameError: UiText = UiText.DynamicString(""),
 )

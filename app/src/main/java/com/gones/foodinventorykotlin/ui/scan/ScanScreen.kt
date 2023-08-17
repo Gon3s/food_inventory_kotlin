@@ -40,7 +40,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.R
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.Screen
 import kotlinx.coroutines.flow.launchIn
@@ -50,7 +50,7 @@ import timber.log.Timber
 @ExperimentalMaterial3Api
 @Composable
 fun ScanScreen(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
     navController: NavController,
 ) {
     val context = LocalContext.current
@@ -75,11 +75,11 @@ fun ScanScreen(
     LaunchedEffect(key1 = true) {
         launcher.launch(Manifest.permission.CAMERA)
     }
-    val screen = appBarState.currentScreen as? Screen.Scan
+    val screen = scaffoldState.currentScreen as? Screen.Scan
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             when (action) {
-                Screen.Scan.AppBarIcons.NavigationIcon -> {
+                Screen.Scan.Actions.NavigationIcon -> {
                     navController.popBackStack()
                 }
             }

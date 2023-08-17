@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @Stable
-class AppBarState(
+class ScaffoldState(
     navController: NavController,
     scope: CoroutineScope,
 ) {
@@ -35,7 +35,7 @@ class AppBarState(
     var currentScreen by mutableStateOf<Screen?>(null)
         private set
 
-    val isVisible: Boolean
+    val isAppBarVisible: Boolean
         @Composable get() = currentScreen?.isAppBarVisible == true
 
     val navigationIcon: ImageVector?
@@ -53,9 +53,6 @@ class AppBarState(
     val actions: List<MenuItem>
         @Composable get() = currentScreen?.actionsMenu.orEmpty()
 
-    val isFloationButtonVisible: Boolean
-        @Composable get() = currentScreen?.floatingActionIcon != null
-
     val floatingActionIcon: ImageVector?
         @Composable get() = currentScreen?.floatingActionIcon
 
@@ -70,4 +67,4 @@ class AppBarState(
 fun rememberAppBarState(
     navController: NavController,
     scope: CoroutineScope = rememberCoroutineScope(),
-) = remember { AppBarState(navController, scope) }
+) = remember { ScaffoldState(navController, scope) }

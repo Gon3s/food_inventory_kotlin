@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.common.UiText
+import com.gones.foodinventorykotlin.domain.usecase.CategoryUseCase
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,7 @@ import kotlinx.datetime.Clock
 
 class ProductViewModel(
     private val productUseCase: ProductUseCase,
+    private val categoryUseCase: CategoryUseCase,
     private val barcode: String? = null,
     private val id: String? = null,
 ) : ViewModel() {
@@ -97,6 +99,10 @@ class ProductViewModel(
             }.launchIn(viewModelScope)
         }
 
+        categoryUseCase.getAllCategories().onEach {
+            _state.value = _state.value.copy(categories = it)
+        }.launchIn(viewModelScope)
+
         if (barcode == null && id == null) {
             _state.value = _state.value.copy(
                 isLoading = false,
@@ -140,17 +146,15 @@ class ProductViewModel(
 
             is ProductAddEvent.Consume -> {
                 CoroutineScope(Dispatchers.IO).launch {
-                    _state.value.product.let { product ->
-                        _state.value = _state.value.copy(isLoading = true)
-                        _state.value = _state.value.copy(
-                            product = product.copy(
-                                consumed = true,
-                                consumed_at = Clock.System.now()
-                            )
+                    _state.value = _state.value.copy(isLoading = true)
+                    _state.value = _state.value.copy(
+                        product = _state.value.product.copy(
+                            consumed = true,
+                            consumed_at = Clock.System.now()
                         )
-                        productUseCase.consumedProduct(product)
-                        _state.value = _state.value.copy(isLoading = false)
-                    }
+                    )
+                    productUseCase.consumedProduct(_state.value.product)
+                    _state.value = _state.value.copy(isLoading = false)
                 }
             }
 
@@ -206,6 +210,18 @@ class ProductViewModel(
                         )
                     }
                 }
+            }
+
+            is ProductAddEvent.ExpandedCategory -> {
+                _state.value = _state.value.copy(categoryExpanded = event.expanded)
+            }
+
+            is ProductAddEvent.SelectedCategory -> {
+                _state.value.product.let {
+                    _state.value =
+                        _state.value.copy(product = it.copy(category_id = event.categoryId))
+                }
+                _state.value = _state.value.copy(categoryExpanded = false)
             }
         }
     }

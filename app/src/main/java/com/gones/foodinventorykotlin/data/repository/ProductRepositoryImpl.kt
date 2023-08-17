@@ -36,14 +36,13 @@ class ProductRepositoryImpl(
     }
 
     override fun getProducts(): Flow<List<Product>> = flow {
-        val user_id = supabaseClient.gotrue.currentUserOrNull()?.id
-        Timber.e("DLOG: user_id: $user_id")
-
         val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 Product::consumed eq false
                 Product::user_id eq supabaseClient.gotrue.currentUserOrNull()?.id
-                order(Product::expiry_date.name, Order.DESCENDING)
+                order(
+                    Product::expiry_date.name, Order.ASCENDING
+                )
             }
                 .decodeList<Product>()
         }
@@ -56,14 +55,14 @@ class ProductRepositoryImpl(
     }
 
     override fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
-        val product = withContext(Dispatchers.IO) {
+        val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 Product::consumed eq false
                 eq("barcode", barcode)
                 Product::user_id eq supabaseClient.gotrue.currentUserOrNull()?.id
             }.decodeList<Product>()
         }
-        emit(product)
+        emit(products)
     }
 
     override fun getProductById(id: Int): Flow<Product> = flow {
@@ -85,6 +84,7 @@ class ProductRepositoryImpl(
                     Product::consumed setTo product.consumed
                     Product::consumed_at setTo product.consumed_at
                     Product::note setTo product.note
+                    Product::category_id setTo product.category_id
                 }
             ) {
                 Product::id eq product.id

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -13,7 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import com.gones.foodinventorykotlin.ui._common.component.ProductItem
 import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
@@ -28,8 +29,9 @@ import timber.log.Timber
 
 @Composable
 fun HomeScreen(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
     snackbarHostState: SnackbarHostState,
+    drawerState: DrawerState,
     navController: NavController,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -41,16 +43,24 @@ fun HomeScreen(
         viewModel.getProducts()
     }
 
-    val screen = appBarState.currentScreen as? Screen.Home
+    val screen = scaffoldState.currentScreen as? Screen.Home
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             Timber.d("DLOG: HomeScreen : ScanIcon : action : $action")
             when (action) {
-                Screen.Home.AppBarIcons.ScanIcon -> {
+                Screen.Home.Actions.ScanIcon -> {
                     navController.navigate(ScanRoute)
                 }
 
-                Screen.Home.AppBarIcons.Logout -> {
+                Screen.Home.Actions.ToggleDrawer -> {
+                    if (drawerState.isClosed) {
+                        drawerState.open()
+                    } else {
+                        drawerState.close()
+                    }
+                }
+
+                Screen.Home.Actions.Logout -> {
                     viewModel.logout()
                 }
             }

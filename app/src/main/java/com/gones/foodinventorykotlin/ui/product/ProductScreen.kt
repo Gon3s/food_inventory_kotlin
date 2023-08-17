@@ -11,7 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +33,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gones.foodinventorykotlin.R
-import com.gones.foodinventorykotlin.ui._common.AppBarState
+import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import com.gones.foodinventorykotlin.ui._common.component.OutlineTextFieldCustom
 import com.gones.foodinventorykotlin.ui._common.component.ProductItem
 import com.gones.foodinventorykotlin.ui._common.navigation.Screen
@@ -49,7 +53,7 @@ import java.util.Locale
 @ExperimentalMaterial3Api
 @Composable
 fun ProductScreen(
-    appBarState: AppBarState,
+    scaffoldState: ScaffoldState,
     barcode: String? = null,
     id: String? = null,
     snackbarHostState: SnackbarHostState,
@@ -87,15 +91,15 @@ fun ProductScreen(
         }
     }
 
-    val screen = appBarState.currentScreen as? Screen.Product
+    val screen = scaffoldState.currentScreen as? Screen.Product
     LaunchedEffect(key1 = screen) {
         screen?.actions?.onEach { action ->
             when (action) {
-                Screen.Product.AppBarIcons.NavigationIcon -> {
+                Screen.Product.Actions.NavigationIcon -> {
                     navController.popBackStack()
                 }
 
-                Screen.Product.AppBarIcons.Save -> {
+                Screen.Product.Actions.Save -> {
                     viewModel.onEvent(ProductAddEvent.SaveProduct)
                 }
             }
@@ -153,6 +157,45 @@ fun ProductScreen(
                         color = Color.Gray,
                         modifier = Modifier.padding(top = 8.dp)
                     )
+                }
+            }
+
+            if (state.categories.isNotEmpty()) {
+                ExposedDropdownMenuBox(expanded = state.categoryExpanded, onExpandedChange = {
+                    viewModel.onEvent(ProductAddEvent.ExpandedCategory(it))
+                }) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        readOnly = true,
+                        value = state.categories.find { it.id == product.category_id }?.name ?: "",
+                        onValueChange = { },
+                        label = { Text(stringResource(id = R.string.category)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = state.categoryExpanded) },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    )
+                    ExposedDropdownMenu(
+                        expanded = state.categoryExpanded,
+                        onDismissRequest = {
+                            viewModel.onEvent(
+                                ProductAddEvent.ExpandedCategory(
+                                    false
+                                )
+                            )
+                        },
+                    ) {
+                        state.categories.forEach { category ->
+                            DropdownMenuItem(
+                                text = { Text(category.name) },
+                                onClick = {
+                                    viewModel.onEvent(ProductAddEvent.SelectedCategory(category.id))
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            )
+                        }
+                    }
                 }
             }
 
@@ -260,7 +303,7 @@ fun ProductScreen(
                                 SimpleDateFormat(
                                     "dd/MM/yyyy",
                                     Locale.getDefault()
-                                ).format(product.consumed_at?.epochSeconds),
+                                ).format(product.consumed_at?.toEpochMilliseconds()),
                             ),
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
