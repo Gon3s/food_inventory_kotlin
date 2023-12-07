@@ -18,8 +18,6 @@ class AuthenticationRepositoryImpl(
                 this.email = email
                 this.password = password
             }
-            val user: UserInfo =
-                supabaseClient.gotrue.retrieveUserForCurrentSession(updateSession = true)
 
             true
         } catch (e: Exception) {

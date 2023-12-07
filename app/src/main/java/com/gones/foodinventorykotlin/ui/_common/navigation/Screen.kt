@@ -1,6 +1,7 @@
 package com.gones.foodinventorykotlin.ui._common.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -83,7 +84,7 @@ sealed interface Screen {
     class Scan : Screen {
         override val route: String = ScanRoute
         override val isAppBarVisible: Boolean = true
-        override val navigationIcon: ImageVector = Icons.Default.ArrowBack
+        override val navigationIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack
         override val onNavigationIconClick: (() -> Unit) = {
             _actions.tryEmit(Actions.NavigationIcon)
         }
@@ -100,7 +101,7 @@ sealed interface Screen {
     class Product : Screen {
         override val route: String = ProductRoute
         override val isAppBarVisible: Boolean = true
-        override val navigationIcon: ImageVector = Icons.Default.ArrowBack
+        override val navigationIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack
         override val onNavigationIconClick: (() -> Unit) = {
             _actions.tryEmit(Actions.NavigationIcon)
         }
@@ -127,7 +128,7 @@ sealed interface Screen {
         override val route: String = RegisterRoute
         override val isAppBarVisible: Boolean = true
         override val title: Int = R.string.sign_up
-        override val navigationIcon: ImageVector = Icons.Default.ArrowBack
+        override val navigationIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack
         override val onNavigationIconClick: (() -> Unit) = {
             _actions.tryEmit(Actions.NavigationIcon)
         }
