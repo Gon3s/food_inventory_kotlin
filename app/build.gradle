@@ -60,7 +60,7 @@ dependencies {
     def retrofit_version = "2.9.0"
     def logging_interceptor_version = '5.0.0-alpha.11'
     def navigation_version = '2.7.5'
-    def supabase_version = '1.4.7'
+    def supabase_version = '2.0.1'
     def nav_version = '2.7.5'
     def coil_version = '2.5.0'
     def camera_version = '1.3.0'
