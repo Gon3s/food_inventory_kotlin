@@ -58,7 +58,7 @@ dependencies {
     // Version
     def koin_version = '3.5.0'
     def retrofit_version = "2.9.0"
-    def logging_interceptor_version = '5.0.0-alpha.11'
+    def logging_interceptor_version = '5.0.0-alpha.12'
     def navigation_version = '2.7.5'
     def supabase_version = '1.4.7'
     def nav_version = '2.7.5'
