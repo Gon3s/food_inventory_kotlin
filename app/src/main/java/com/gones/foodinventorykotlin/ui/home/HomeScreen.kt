@@ -16,14 +16,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.ui._common.ScaffoldState
 import com.gones.foodinventorykotlin.ui._common.component.ProductItem
-import com.gones.foodinventorykotlin.ui._common.navigation.HomeRoute
-import com.gones.foodinventorykotlin.ui._common.navigation.LoginRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.ScanRoute
 import com.gones.foodinventorykotlin.ui._common.navigation.Screen
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -59,34 +55,8 @@ fun HomeScreen(
                         drawerState.close()
                     }
                 }
-
-                Screen.Home.Actions.Logout -> {
-                    viewModel.logout()
-                }
             }
         }?.launchIn(this)
-    }
-
-    LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is HomeViewModel.UiEvent.ShowSnackbar -> {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            event.message.asString(context)
-                        )
-                    }
-                }
-
-                is HomeViewModel.UiEvent.LoginOk -> {
-                    navController.navigate(LoginRoute) {
-                        popUpTo(HomeRoute) {
-                            inclusive = true
-                        }
-                    }
-                }
-            }
-        }
     }
 
     LazyColumn(

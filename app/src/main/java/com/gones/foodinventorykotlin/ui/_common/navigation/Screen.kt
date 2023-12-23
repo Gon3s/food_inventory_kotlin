@@ -3,7 +3,6 @@ package com.gones.foodinventorykotlin.ui._common.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.gones.foodinventorykotlin.R
@@ -62,19 +61,10 @@ sealed interface Screen {
         override val floatingActionIconClick: (() -> Unit) = {
             _actions.tryEmit(Actions.ScanIcon)
         }
-        override val actionsMenu: List<MenuItem> = listOf(
-            MenuItem(
-                onClick = {
-                    _actions.tryEmit(Actions.Logout)
-                },
-                icon = R.drawable.ic_logout
-            )
-        )
 
         enum class Actions {
             ScanIcon,
-            ToggleDrawer,
-            Logout
+            ToggleDrawer
         }
 
         private val _actions = MutableSharedFlow<Actions>(extraBufferCapacity = 1)

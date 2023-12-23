@@ -3,7 +3,7 @@ package com.gones.foodinventorykotlin.data.repository
 import com.gones.foodinventorykotlin.domain.entity.Category
 import com.gones.foodinventorykotlin.domain.repository.CategoryRepository
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.gotrue
+import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,7 +13,9 @@ class CategoryRepositoryImpl(
 ) : CategoryRepository {
     override fun getAllCategories(): Flow<List<Category>> = flow {
         val categories = supabaseClient.postgrest["category"].select {
-            Category::user_id eq supabaseClient.gotrue.currentUserOrNull()?.id
+            filter {
+                Category::user_id eq supabaseClient.auth.currentUserOrNull()?.id
+            }
         }.decodeList<Category>()
 
         emit(categories)
@@ -21,14 +23,16 @@ class CategoryRepositoryImpl(
 
     override fun getCategoryByName(name: String): Flow<Category?> = flow {
         val category = supabaseClient.postgrest["category"].select {
-            Category::name eq name
+            filter {
+                Category::name eq name
+            }
         }
 
         emit(category.decodeAsOrNull<Category>())
     }
 
     override suspend fun insertCategory(category: Category) {
-        category.user_id = supabaseClient.gotrue.currentUserOrNull()?.id
+        category.user_id = supabaseClient.auth.currentUserOrNull()?.id
         supabaseClient.postgrest["category"].insert(category)
     }
 
@@ -36,7 +40,9 @@ class CategoryRepositoryImpl(
         supabaseClient.postgrest["category"].update({
             Category::name setTo category.name
         }) {
-            Category::id eq category.id
+            filter {
+                Category::id eq category.id
+            }
         }
     }
 
@@ -45,7 +51,9 @@ class CategoryRepositoryImpl(
         // Todo: Add confirmation dialog
 
         supabaseClient.postgrest["category"].delete {
-            Category::id eq category.id
+            filter {
+                Category::id eq category.id
+            }
         }
     }
 }

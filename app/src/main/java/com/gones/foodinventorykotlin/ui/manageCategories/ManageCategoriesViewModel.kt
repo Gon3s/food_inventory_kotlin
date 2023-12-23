@@ -46,7 +46,7 @@ class ManageCategoriesViewModel(
                     val result = categoryUseCase.addCategory(state.value.category)
 
                     if (result.successful) {
-                        eventFlow.emit(UiEvent.CategorieCreated)
+                        eventFlow.emit(UiEvent.CategoryCreated)
                     } else {
                         eventFlow.emit(
                             UiEvent.ShowSnackbar(
@@ -71,12 +71,12 @@ class ManageCategoriesViewModel(
                     val result = categoryUseCase.deleteCategory(event.category)
 
                     if (result.successful) {
-                        eventFlow.emit(UiEvent.CategorieCreated)
+                        eventFlow.emit(UiEvent.CategoryCreated)
                     } else {
                         eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 message = result.errorMessage
-                                    ?: UiText.StringResource(R.string.error_on_save)
+                                    ?: UiText.StringResource(R.string.error_on_delete)
                             )
                         )
                     }
@@ -87,6 +87,6 @@ class ManageCategoriesViewModel(
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: UiText) : UiEvent()
-        object CategorieCreated : UiEvent()
+        object CategoryCreated : UiEvent()
     }
 }

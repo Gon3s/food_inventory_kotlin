@@ -59,7 +59,7 @@ fun ManageCategoriesScreen(
     LaunchedEffect(key1 = viewModel.eventFlow) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is ManageCategoriesViewModel.UiEvent.CategorieCreated -> {
+                is ManageCategoriesViewModel.UiEvent.CategoryCreated -> {
                     viewModel.getCategories()
                     viewModel.onEvent(ManageCategoriesEvent.CloseDialog)
                 }

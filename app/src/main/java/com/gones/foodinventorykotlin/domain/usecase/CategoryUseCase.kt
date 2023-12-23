@@ -11,6 +11,7 @@ class CategoryUseCase(
     private val categoryRepository: CategoryRepository,
 ) {
     fun getAllCategories(): Flow<List<Category>> = categoryRepository.getAllCategories()
+
     suspend fun addCategory(category: Category): SupabaseResult {
         if (category.name.isBlank()) {
             return SupabaseResult(

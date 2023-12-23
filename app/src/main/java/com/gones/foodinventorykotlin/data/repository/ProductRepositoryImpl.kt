@@ -5,7 +5,7 @@ import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.entity.ProductResult
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.gotrue
+import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.postgrest.result.PostgrestResult
@@ -38,8 +38,10 @@ class ProductRepositoryImpl(
     override fun getProducts(): Flow<List<Product>> = flow {
         val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
-                Product::consumed eq false
-                Product::user_id eq supabaseClient.gotrue.currentUserOrNull()?.id
+                filter {
+                    Product::consumed eq false
+                    Product::user_id eq supabaseClient.auth.currentUserOrNull()?.id
+                }
                 order(
                     Product::expiry_date.name, Order.ASCENDING
                 )
@@ -50,16 +52,18 @@ class ProductRepositoryImpl(
     }
 
     override suspend fun insertProduct(product: Product) {
-        product.user_id = supabaseClient.gotrue.currentUserOrNull()?.id
+        product.user_id = supabaseClient.auth.currentUserOrNull()?.id
         supabaseClient.postgrest["product"].insert(product)
     }
 
     override fun getProductsByEan(barcode: String): Flow<List<Product>> = flow {
         val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
-                Product::consumed eq false
-                eq("barcode", barcode)
-                Product::user_id eq supabaseClient.gotrue.currentUserOrNull()?.id
+                filter {
+                    Product::consumed eq false
+                    eq("barcode", barcode)
+                    Product::user_id eq supabaseClient.auth.currentUserOrNull()?.id
+                }
             }.decodeList<Product>()
         }
         emit(products)
@@ -68,7 +72,9 @@ class ProductRepositoryImpl(
     override fun getProductById(id: Int): Flow<Product> = flow {
         val product = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select() {
-                eq("id", id)
+                filter {
+                    eq("id", id)
+                }
             }.decodeSingle<Product>()
         }
         emit(product)
@@ -87,9 +93,11 @@ class ProductRepositoryImpl(
                     Product::category_id setTo product.category_id
                 }
             ) {
-                Product::id eq product.id
+                filter {
+                    Product::id eq product.id
+                }
             }
-            Timber.d("DLOG: updateProduct: ${result.body}")
+            Timber.d("DLOG: updateProduct: ${result.data}")
         } catch (e: Exception) {
             Timber.e("DLOG: updateProduct: ${e.message}")
         }
@@ -97,7 +105,9 @@ class ProductRepositoryImpl(
 
     override suspend fun deleteProduct(product: Product) {
         supabaseClient.postgrest["product"].delete {
-            eq("id", product.id)
+            filter {
+                eq("id", product.id)
+            }
         }
     }
 }

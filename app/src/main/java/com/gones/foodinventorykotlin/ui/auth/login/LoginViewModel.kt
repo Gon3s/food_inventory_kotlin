@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class LoginViewModel(
@@ -75,8 +76,10 @@ class LoginViewModel(
                     state.value.password
                 )
             ) {
+                Timber.d("DLOG: LoginOk")
                 eventFlow.emit(UiEvent.LoginOk)
             } else {
+                Timber.d("DLOG: LoginError")
                 eventFlow.emit(UiEvent.ShowSnackbar(UiText.StringResource(resId = R.string.an_error_occured)))
             }
         }

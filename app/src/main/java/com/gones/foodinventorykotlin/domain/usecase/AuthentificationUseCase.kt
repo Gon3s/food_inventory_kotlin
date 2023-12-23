@@ -16,4 +16,10 @@ class AuthentificationUseCase(
         authenticationRepository.signIn(email, password)
 
     suspend fun logout() = authenticationRepository.logout()
+
+    fun getCurrentUser() = authenticationRepository.getCurrentUser()
+
+    suspend fun setCurrentUser() = authenticationRepository.setCurrentUser()
+
+    suspend fun removeCurrentUser() = authenticationRepository.removeCurrentUser()
 }
