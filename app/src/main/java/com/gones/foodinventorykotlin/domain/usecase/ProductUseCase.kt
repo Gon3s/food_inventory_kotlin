@@ -56,7 +56,8 @@ class ProductUseCase(
         return SupabaseResult(successful = true)
     }
 
-    fun getProducts(): Flow<List<Product>> = productRepository.getProducts()
+    fun getProducts(categoryId: Int? = null): Flow<List<Product>> =
+        productRepository.getProducts(categoryId)
 
     fun getProductByEan(barcode: String): Flow<List<Product>> =
         productRepository.getProductsByEan(barcode)

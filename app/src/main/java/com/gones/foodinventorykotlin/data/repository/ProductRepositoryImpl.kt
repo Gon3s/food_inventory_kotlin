@@ -35,12 +35,15 @@ class ProductRepositoryImpl(
         }
     }
 
-    override fun getProducts(): Flow<List<Product>> = flow {
+    override fun getProducts(categoryId: Int?): Flow<List<Product>> = flow {
         val products = withContext(Dispatchers.IO) {
             supabaseClient.postgrest["product"].select {
                 filter {
                     Product::consumed eq false
                     Product::user_id eq supabaseClient.auth.currentUserOrNull()?.id
+                    if (categoryId != null) {
+                        Product::category_id eq categoryId
+                    }
                 }
                 order(
                     Product::expiry_date.name, Order.ASCENDING
