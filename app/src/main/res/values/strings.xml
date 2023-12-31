@@ -45,4 +45,5 @@
     <string name="category">Catégorie</string>
     <string name="logout">Se déconnecter</string>
     <string name="all">Tous</string>
+    <string name="no_categories">Aucune catégorie</string>
 </resources>

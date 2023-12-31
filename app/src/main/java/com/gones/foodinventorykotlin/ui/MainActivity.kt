@@ -34,11 +34,7 @@ class MainActivity(
         setupSplashScreen()
 
         setContent {
-            Timber.d("DLOG: setContent")
-            FoodInventoryTheme(
-                // darkTheme = false,
-                dynamicColor = true
-            ) {
+            FoodInventoryTheme {
                 val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)

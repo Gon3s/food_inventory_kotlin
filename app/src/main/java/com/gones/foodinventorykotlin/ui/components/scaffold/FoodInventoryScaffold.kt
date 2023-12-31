@@ -73,7 +73,31 @@ fun FoodInventoryScaffold(
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            Modifier.padding(paddingValues)
+            Modifier.padding(paddingValues),
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(700)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(700)
+                )
+            }
         ) {
             composable(SplashRoute) {
                 Box(
@@ -137,32 +161,7 @@ fun FoodInventoryScaffold(
                     id = it.arguments?.getString("id")
                 )
             }
-            composable(
-                ManageCategoriesRoute,
-                enterTransition = {
-                    slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                        animationSpec = tween(700)
-                    )
-                },
-                exitTransition = {
-                    slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                        animationSpec = tween(700)
-                    )
-                },
-                popEnterTransition = {
-                    slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.End,
-                        animationSpec = tween(700)
-                    )
-                },
-                popExitTransition = {
-                    slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.End,
-                        animationSpec = tween(700)
-                    )
-                }) {
+            composable(ManageCategoriesRoute) {
                 ManageCategoriesScreen(
                     scaffoldState = appBarState,
                     snackbarHostState = snackbarHostState,

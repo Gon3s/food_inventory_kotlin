@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -20,7 +21,6 @@ import com.gones.foodinventorykotlin.R
 import com.gones.foodinventorykotlin.ui.components.ChipItem
 import com.gones.foodinventorykotlin.ui.components.ProductItem
 import com.gones.foodinventorykotlin.ui.components.scaffold.ScaffoldState
-import com.gones.foodinventorykotlin.ui.navigation.HomeRoute
 import com.gones.foodinventorykotlin.ui.navigation.ManageCategoriesRoute
 import com.gones.foodinventorykotlin.ui.navigation.ScanRoute
 import com.gones.foodinventorykotlin.ui.navigation.Screen
@@ -61,8 +61,12 @@ fun HomeScreen(
         }?.launchIn(this)
     }
 
+    val lazyRowListState = rememberLazyListState()
+    val lazyColumnListState = rememberLazyListState()
+
     Column {
         LazyRow(
+            state = lazyRowListState,
             modifier = Modifier
                 .padding(start = 8.dp)
                 .fillMaxWidth()
@@ -97,6 +101,7 @@ fun HomeScreen(
         }
 
         LazyColumn(
+            state = lazyColumnListState,
             modifier = Modifier
                 .fillMaxSize()
         ) {

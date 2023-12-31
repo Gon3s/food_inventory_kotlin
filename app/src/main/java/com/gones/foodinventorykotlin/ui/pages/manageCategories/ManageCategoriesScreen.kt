@@ -1,6 +1,7 @@
 package com.gones.foodinventorykotlin.ui.pages.manageCategories
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -83,27 +84,41 @@ fun ManageCategoriesScreen(
         }?.launchIn(this)
     }
 
-    if (state.categories.isEmpty()) {
-        Text(text = "No categories")
+    if (state.isLoading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = stringResource(id = R.string.loading),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     } else {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(
-                items = state.categories, key = { category ->
-                    category.id
+        if (state.categories.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = stringResource(id = R.string.no_categories),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(
+                    items = state.categories, key = { category ->
+                        category.id
+                    }
+                ) {
+                    ListItem(headlineContent = { Text(text = it.name) }, trailingContent = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_close),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable {
+                                    viewModel.onEvent(ManageCategoriesEvent.DeleteCategory(it))
+                                },
+                        )
+                    })
                 }
-            ) {
-                ListItem(headlineContent = { Text(text = it.name) }, trailingContent = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_close),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable {
-                                viewModel.onEvent(ManageCategoriesEvent.DeleteCategory(it))
-                            },
-                    )
-                })
             }
         }
     }

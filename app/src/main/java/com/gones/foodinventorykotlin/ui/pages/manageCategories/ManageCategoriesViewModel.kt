@@ -30,7 +30,7 @@ class ManageCategoriesViewModel(
         Timber.d("DLOG: getCategories")
         getCategoriesJob?.cancel()
         getCategoriesJob = categoryUseCase.getAllCategories().onEach { categories ->
-            state.value = state.value.copy(categories = categories)
+            state.value = state.value.copy(categories = categories, isLoading = false)
         }.launchIn(viewModelScope)
     }
 
