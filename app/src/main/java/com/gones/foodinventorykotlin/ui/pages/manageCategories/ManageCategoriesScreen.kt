@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,8 +48,6 @@ fun ManageCategoriesScreen(
 ) {
     val context = LocalContext.current
     val state = viewModel.state.value
-
-    Timber.d("DLOG: ManageCategoriesScreen")
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getCategories()

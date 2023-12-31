@@ -36,8 +36,8 @@ class MainActivity(
         setContent {
             Timber.d("DLOG: setContent")
             FoodInventoryTheme(
-                darkTheme = false,
-                dynamicColor = false
+                // darkTheme = false,
+                dynamicColor = true
             ) {
                 val navController = rememberNavController()
                 val snackbarHostState = remember { SnackbarHostState() }

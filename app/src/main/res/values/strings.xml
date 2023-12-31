@@ -44,4 +44,5 @@
     <string name="category_already_exists">La catégorie existe déjà</string>
     <string name="category">Catégorie</string>
     <string name="logout">Se déconnecter</string>
+    <string name="all">Tous</string>
 </resources>
