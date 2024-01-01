@@ -1,5 +1,7 @@
 package com.gones.foodinventorykotlin.ui.pages.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +13,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,6 +33,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     scaffoldState: ScaffoldState,
@@ -36,6 +42,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state = viewModel.state.value
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getProducts()
@@ -105,17 +112,31 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            items(items = state.products, key = { product -> product.id }) { product ->
-                ProductItem(
-                    product = product,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.navigate("product?id=${product.id}")
-                        }
-                )
-                HorizontalDivider()
+            state.products.forEach { section ->
+                stickyHeader {
+                    Text(
+                        text = section.key,
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.secondary)
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
+                }
+                items(items = section.value, key = { product -> product.id }) { product ->
+                    ProductItem(
+                        product = product,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.navigate("product?id=${product.id}")
+                            }
+                    )
+                    HorizontalDivider()
+                }
             }
+
+
         }
     }
 }

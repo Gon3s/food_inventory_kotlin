@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
     suspend fun getProductByEanWS(barcode: String): ProductResult
-    fun getProducts(categoryId: Int?): Flow<List<Product>>
+    fun getProducts(categoryId: Int?): Flow<Map<String, List<Product>>>
     suspend fun insertProduct(product: Product)
     fun getProductsByEan(barcode: String): Flow<List<Product>>
     fun getProductById(id: Int): Flow<Product>

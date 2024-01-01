@@ -4,7 +4,7 @@ import com.gones.foodinventorykotlin.domain.entity.Category
 import com.gones.foodinventorykotlin.domain.entity.Product
 
 data class HomeState(
-    val products: List<Product> = listOf(),
+    val products: Map<String, List<Product>> = mapOf(),
     val categories: List<Category> = listOf(),
     val categoryId: Int? = null,
 )

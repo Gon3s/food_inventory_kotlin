@@ -10,8 +10,20 @@ import androidx.compose.ui.res.stringResource
  */
 sealed class UiText {
     data class DynamicString(val value: String) : UiText()
+
+
     class StringResource(
         @StringRes val resId: Int,
+        vararg val args: Any,
+    ) : UiText(), Comparable<StringResource> {
+        override fun compareTo(other: StringResource): Int {
+            return this.resId.compareTo(other.resId)
+        }
+    }
+
+    class PluralResource(
+        @StringRes val resId: Int,
+        val quantity: Int,
         vararg val args: Any,
     ) : UiText()
 
@@ -20,6 +32,7 @@ sealed class UiText {
         return when (this) {
             is DynamicString -> value
             is StringResource -> stringResource(resId, *args)
+            is PluralResource -> stringResource(resId, quantity, *args)
         }
     }
 
@@ -27,6 +40,7 @@ sealed class UiText {
         return when (this) {
             is DynamicString -> value
             is StringResource -> context.getString(resId, *args)
+            is PluralResource -> context.resources.getQuantityString(resId, quantity, *args)
         }
     }
 }

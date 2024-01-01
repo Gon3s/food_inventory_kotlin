@@ -14,6 +14,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 class ProductRepositoryImpl(
     private val remoteApi: RemoteApi,
@@ -35,24 +40,44 @@ class ProductRepositoryImpl(
         }
     }
 
-    override fun getProducts(categoryId: Int?): Flow<List<Product>> = flow {
-        val products = withContext(Dispatchers.IO) {
-            supabaseClient.postgrest["product"].select {
-                filter {
-                    Product::consumed eq false
-                    Product::user_id eq supabaseClient.auth.currentUserOrNull()?.id
-                    if (categoryId != null) {
-                        Product::category_id eq categoryId
+    override fun getProducts(categoryId: Int?): Flow<Map<String, List<Product>>> =
+        flow {
+            val products = withContext(Dispatchers.IO) {
+                supabaseClient.postgrest["product"].select {
+                    filter {
+                        Product::consumed eq false
+                        Product::user_id eq supabaseClient.auth.currentUserOrNull()?.id
+                        if (categoryId != null) {
+                            Product::category_id eq categoryId
+                        }
                     }
+                    order(
+                        Product::expiry_date.name, Order.ASCENDING
+                    )
                 }
-                order(
-                    Product::expiry_date.name, Order.ASCENDING
-                )
+                    .decodeList<Product>()
             }
-                .decodeList<Product>()
+
+            val groupedProducts = products.groupBy { product ->
+                product.expiry_date?.let { expiryDate ->
+                    val temporalExpiryDate = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(expiryDate),
+                        ZoneId.systemDefault()
+                    )
+                    val daysToExpiry = ChronoUnit.DAYS.between(LocalDate.now(), temporalExpiryDate)
+                    when {
+                        daysToExpiry < 0 -> "0"
+                        daysToExpiry in 0..3 -> "0-3"
+                        daysToExpiry in 4..15 -> "4-15"
+                        daysToExpiry in 16..30 -> "16-30"
+                        daysToExpiry in 31..90 -> "31-90"
+                        else -> "90+"
+                    }
+                } ?: "-"
+            }
+
+            emit(groupedProducts)
         }
-        emit(products)
-    }
 
     override suspend fun insertProduct(product: Product) {
         product.user_id = supabaseClient.auth.currentUserOrNull()?.id
