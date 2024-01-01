@@ -1,6 +1,7 @@
 package com.gones.foodinventorykotlin.domain.usecase
 
 import com.gones.foodinventorykotlin.R
+import com.gones.foodinventorykotlin.common.ExpirySections
 import com.gones.foodinventorykotlin.common.UiText
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.repository.ProductRepository
@@ -56,7 +57,7 @@ class ProductUseCase(
         return SupabaseResult(successful = true)
     }
 
-    fun getProducts(categoryId: Int? = null): Flow<Map<String, List<Product>>> =
+    fun getProducts(categoryId: Int? = null): Flow<Map<ExpirySections, List<Product>>> =
         productRepository.getProducts(categoryId)
 
     fun getProductByEan(barcode: String): Flow<List<Product>> =

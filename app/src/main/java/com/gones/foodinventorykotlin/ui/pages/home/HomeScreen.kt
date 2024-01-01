@@ -4,13 +4,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -68,16 +66,11 @@ fun HomeScreen(
         }?.launchIn(this)
     }
 
-    val lazyRowListState = rememberLazyListState()
-    val lazyColumnListState = rememberLazyListState()
-
-    Column {
-        LazyRow(
-            state = lazyRowListState,
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .fillMaxWidth()
-        ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        LazyRow {
             item {
                 ChipItem(
                     label = stringResource(id = R.string.all),
@@ -107,19 +100,15 @@ fun HomeScreen(
             }
         }
 
-        LazyColumn(
-            state = lazyColumnListState,
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+        LazyColumn {
             state.products.forEach { section ->
                 stickyHeader {
                     Text(
-                        text = section.key,
-                        style = MaterialTheme.typography.headlineSmall,
+                        text = section.key.title.asString(context),
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.secondary)
+                            .background(MaterialTheme.colorScheme.primary)
                             .padding(horizontal = 16.dp, vertical = 4.dp)
                     )
                 }
@@ -135,8 +124,6 @@ fun HomeScreen(
                     HorizontalDivider()
                 }
             }
-
-
         }
     }
 }

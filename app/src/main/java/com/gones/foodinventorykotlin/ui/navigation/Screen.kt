@@ -140,7 +140,7 @@ sealed interface Screen {
         override val route: String = ManageCategoriesRoute
         override val isAppBarVisible: Boolean = true
         override val title: Int = R.string.manage_categories
-        override val navigationIcon: ImageVector = Icons.Default.Menu
+        override val navigationIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack
         override val onNavigationIconClick: (() -> Unit) = {
             _actions.tryEmit(Actions.NavigationIcon)
         }

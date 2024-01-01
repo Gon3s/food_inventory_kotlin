@@ -1,5 +1,6 @@
 package com.gones.foodinventorykotlin.data.repository
 
+import com.gones.foodinventorykotlin.common.ExpirySections
 import com.gones.foodinventorykotlin.data.api.RemoteApi
 import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.domain.entity.ProductResult
@@ -40,7 +41,7 @@ class ProductRepositoryImpl(
         }
     }
 
-    override fun getProducts(categoryId: Int?): Flow<Map<String, List<Product>>> =
+    override fun getProducts(categoryId: Int?): Flow<Map<ExpirySections, List<Product>>> =
         flow {
             val products = withContext(Dispatchers.IO) {
                 supabaseClient.postgrest["product"].select {
@@ -66,14 +67,14 @@ class ProductRepositoryImpl(
                     )
                     val daysToExpiry = ChronoUnit.DAYS.between(LocalDate.now(), temporalExpiryDate)
                     when {
-                        daysToExpiry < 0 -> "0"
-                        daysToExpiry in 0..3 -> "0-3"
-                        daysToExpiry in 4..15 -> "4-15"
-                        daysToExpiry in 16..30 -> "16-30"
-                        daysToExpiry in 31..90 -> "31-90"
-                        else -> "90+"
+                        daysToExpiry < 0 -> ExpirySections.Expired
+                        daysToExpiry in 0..3 -> ExpirySections.ExpiredIn3Days
+                        daysToExpiry in 4..15 -> ExpirySections.ExpireIn15Days
+                        daysToExpiry in 16..30 -> ExpirySections.ExpireIn1Month
+                        daysToExpiry in 31..90 -> ExpirySections.ExpireIn3Month
+                        else -> ExpirySections.ExpireIn3MonthPlus
                     }
-                } ?: "-"
+                } ?: ExpirySections.NoExpiry
             }
 
             emit(groupedProducts)
