@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gones.foodinventorykotlin.domain.usecase.CategoryUseCase
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.plus
 
 class HomeViewModel(
     private val productUseCase: ProductUseCase,
@@ -16,21 +17,23 @@ class HomeViewModel(
     var state = mutableStateOf(HomeState())
         private set
 
-    private var getProductsJob: Job? = null
-    private var getCategoriesJob: Job? = null
-
     fun getProducts() {
-        getProductsJob?.cancel()
-        getProductsJob = productUseCase.getProducts(state.value.categoryId).onEach { products ->
-            state.value = state.value.copy(products = products)
-        }.launchIn(viewModelScope)
+        state.value.let { value ->
+            state.value = state.value.copy(isLoading = true)
+            productUseCase.getProducts(value.categoryId)
+                .onEach { products ->
+                    state.value = state.value.copy(
+                        products = value.products + products,
+                        isLoading = false
+                    )
+                }.launchIn(viewModelScope + SupervisorJob())
+        }
     }
 
     fun getCategories() {
-        getCategoriesJob?.cancel()
-        getCategoriesJob = categoryUseCase.getAllCategories().onEach { categories ->
+        categoryUseCase.getAllCategories().onEach { categories ->
             state.value = state.value.copy(categories = categories)
-        }.launchIn(viewModelScope)
+        }.launchIn(viewModelScope + SupervisorJob())
     }
 
     fun onEvent(event: HomeEvent) {

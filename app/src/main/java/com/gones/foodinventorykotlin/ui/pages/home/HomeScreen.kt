@@ -18,9 +18,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gones.foodinventorykotlin.R
+import com.gones.foodinventorykotlin.common.ExpirySections
+import com.gones.foodinventorykotlin.domain.entity.Category
+import com.gones.foodinventorykotlin.domain.entity.Product
 import com.gones.foodinventorykotlin.ui.components.ChipItem
 import com.gones.foodinventorykotlin.ui.components.ProductItem
 import com.gones.foodinventorykotlin.ui.components.scaffold.ScaffoldState
@@ -29,9 +33,9 @@ import com.gones.foodinventorykotlin.ui.navigation.ScanRoute
 import com.gones.foodinventorykotlin.ui.navigation.Screen
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.datetime.Instant
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     scaffoldState: ScaffoldState,
@@ -40,7 +44,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state = viewModel.state.value
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getProducts()
@@ -70,60 +73,131 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        LazyRow {
-            item {
-                ChipItem(
-                    label = stringResource(id = R.string.all),
-                    selected = state.categoryId == null,
-                    onClick = {
-                        viewModel.onEvent(HomeEvent.CategorySelected(null))
-                    }
-                )
+        CategoriesFilter(
+            categoryId = state.categoryId,
+            categories = state.categories,
+            goToManageCategories = {
+                navController.navigate(ManageCategoriesRoute)
+            },
+            onClickCategory = { categoryId ->
+                viewModel.onEvent(HomeEvent.CategorySelected(categoryId))
             }
-            items(items = state.categories, key = { category -> category.id }) { category ->
-                ChipItem(
-                    label = category.name,
-                    selected = state.categoryId == category.id,
-                    onClick = {
-                        if (state.categoryId == category.id) {
-                            viewModel.onEvent(HomeEvent.CategorySelected(null))
-                        } else {
-                            viewModel.onEvent(HomeEvent.CategorySelected(category.id))
-                        }
-                    }
-                )
-            }
-            item {
-                ChipItem(label = stringResource(id = R.string.add), onClick = {
-                    navController.navigate(ManageCategoriesRoute)
-                })
-            }
-        }
+        )
 
-        LazyColumn {
-            state.products.forEach { section ->
-                stickyHeader {
-                    Text(
-                        text = section.key.title.asString(context),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.primary)
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
+        ProductsList(
+            products = state.products, goToProductDetails = { productId ->
+                navController.navigate("product?id=$productId")
+            }
+        )
+    }
+}
+
+@Composable
+fun CategoriesFilter(
+    categoryId: Int? = null,
+    categories: List<Category> = listOf(),
+    goToManageCategories: () -> Unit = {},
+    onClickCategory: (Int?) -> Unit = {},
+) {
+    LazyRow {
+        item {
+            ChipItem(
+                label = stringResource(id = R.string.all),
+                selected = categoryId == null,
+                onClick = {
+                    onClickCategory(null)
                 }
-                items(items = section.value, key = { product -> product.id }) { product ->
-                    ProductItem(
-                        product = product,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                navController.navigate("product?id=${product.id}")
-                            }
-                    )
-                    HorizontalDivider()
+            )
+        }
+        items(items = categories, key = { category -> category.id }) { category ->
+            ChipItem(
+                label = category.name,
+                selected = categoryId == category.id,
+                onClick = {
+                    if (categoryId == category.id) {
+                        onClickCategory(null)
+                    } else {
+                        onClickCategory(category.id)
+                    }
                 }
+            )
+        }
+        item {
+            ChipItem(label = stringResource(id = R.string.add), onClick = {
+                goToManageCategories()
+            })
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ProductsList(
+    products: Map<ExpirySections, List<Product>>,
+    goToProductDetails: (Int) -> Unit = {}
+) {
+    val context = LocalContext.current
+
+    LazyColumn {
+        products.forEach { section ->
+            stickyHeader {
+                Text(
+                    text = section.key.title.asString(context),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                )
+            }
+            items(items = section.value, key = { product -> product.id }) { product ->
+                ProductItem(
+                    product = product,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            goToProductDetails(product.id)
+                        }
+                )
+                HorizontalDivider()
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun CategoriesFilterPreview() {
+    CategoriesFilter(
+        categoryId = 2,
+        categories = listOf(
+            Category(id = 1, name = "Fruits"),
+            Category(id = 2, name = "Vegetables"),
+            Category(id = 3, name = "Meat"),
+            Category(id = 4, name = "Fish"),
+            Category(id = 5, name = "Dairy"),
+            Category(id = 6, name = "Bakery"),
+            Category(id = 7, name = "Drinks"),
+            Category(id = 8, name = "Frozen"),
+            Category(id = 9, name = "Other"),
+        )
+    )
+}
+
+@Preview
+@Composable
+fun ProductsListPreview() {
+    ProductsList(
+        products = mapOf(
+            ExpirySections.Expired to listOf(
+                Product(
+                    id = 1,
+                    barcode = "123456789",
+                    image_url = "https://fastly.picsum.photos/id/447/200/300.jpg?hmac=WubV-ZWbMgXijt9RLYedmkiaSer2IFiVD7xek928gC8",
+                    product_name = "Banana",
+                    expiry_date = Instant.parse("2021-09-01T00:00:00Z").toEpochMilliseconds(),
+                ),
+            )
+        )
+    )
 }

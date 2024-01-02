@@ -41,7 +41,9 @@ class ProductRepositoryImpl(
         }
     }
 
-    override fun getProducts(categoryId: Int?): Flow<Map<ExpirySections, List<Product>>> =
+    override fun getProducts(
+        categoryId: Int?
+    ): Flow<Map<ExpirySections, List<Product>>> =
         flow {
             val products = withContext(Dispatchers.IO) {
                 supabaseClient.postgrest["product"].select {
@@ -57,6 +59,11 @@ class ProductRepositoryImpl(
                     )
                 }
                     .decodeList<Product>()
+            }
+
+            if (products.isEmpty()) {
+                emit(mapOf())
+                return@flow
             }
 
             val groupedProducts = products.groupBy { product ->
@@ -76,7 +83,6 @@ class ProductRepositoryImpl(
                     }
                 } ?: ExpirySections.NoExpiry
             }
-
             emit(groupedProducts)
         }
 
