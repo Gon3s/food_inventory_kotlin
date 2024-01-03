@@ -60,7 +60,7 @@ class ProductUseCase(
     fun getProducts(
         categoryId: Int? = null
     ): Flow<Map<ExpirySections, List<Product>>> =
-        productRepository.getProducts()
+        productRepository.getProducts(categoryId)
 
     fun getProductByEan(barcode: String): Flow<List<Product>> =
         productRepository.getProductsByEan(barcode)

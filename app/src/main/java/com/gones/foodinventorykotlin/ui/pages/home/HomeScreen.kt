@@ -144,6 +144,7 @@ fun ProductsList(
                 Text(
                     text = section.key.title.asString(context),
                     color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.primary)
