@@ -21,13 +21,11 @@ import com.gones.foodinventorykotlin.ui.components.scaffold.FoodInventoryScaffol
 import com.gones.foodinventorykotlin.ui.theme.FoodInventoryTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 @ExperimentalMaterial3Api
 class MainActivity(
 ) : ComponentActivity() {
     private val viewModel by viewModel<MainViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -71,7 +69,6 @@ class MainActivity(
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isLoading.collect {
-                    Timber.d("DLOG: isLoading: $it")
                     keepSplashScreenOn = it
                 }
             }

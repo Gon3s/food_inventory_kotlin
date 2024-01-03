@@ -99,7 +99,31 @@ fun FoodInventoryScaffold(
                 )
             }
         ) {
-            composable(SplashRoute) {
+            composable(SplashRoute,
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                        animationSpec = tween(700)
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                        animationSpec = tween(700)
+                    )
+                },
+                popEnterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                        animationSpec = tween(700)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                        animationSpec = tween(700)
+                    )
+                }) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -107,9 +131,9 @@ fun FoodInventoryScaffold(
                     contentAlignment = Alignment.Center,
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_splash),
+                        painter = painterResource(id = R.drawable.splash),
                         contentDescription = "",
-                        modifier = Modifier.size(200.dp),
+                        modifier = Modifier.size(200.dp)
                     )
                 }
             }
