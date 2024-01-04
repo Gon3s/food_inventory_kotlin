@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 class ProductViewModel(
     private val productUseCase: ProductUseCase,
@@ -147,14 +146,8 @@ class ProductViewModel(
             is ProductAddEvent.Consume -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     _state.value = _state.value.copy(isLoading = true)
-                    _state.value = _state.value.copy(
-                        product = _state.value.product.copy(
-                            consumed = true,
-                            consumed_at = Clock.System.now()
-                        )
-                    )
-                    productUseCase.consumedProduct(_state.value.product)
-                    _state.value = _state.value.copy(isLoading = false)
+                    val product = productUseCase.consumedProduct(_state.value.product)
+                    _state.value = _state.value.copy(isLoading = false, product = product)
                 }
             }
 

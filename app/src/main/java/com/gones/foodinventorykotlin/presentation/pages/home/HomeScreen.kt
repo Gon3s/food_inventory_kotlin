@@ -3,18 +3,27 @@ package com.gones.foodinventorykotlin.presentation.pages.home
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -85,8 +94,12 @@ fun HomeScreen(
         )
 
         ProductsList(
-            products = state.products, goToProductDetails = { productId ->
+            products = state.products,
+            goToProductDetails = { productId ->
                 navController.navigate("product?id=$productId")
+            },
+            onSwipe = { product ->
+                viewModel.onEvent(HomeEvent.ConsumeProduct(product))
             }
         )
     }
@@ -130,11 +143,13 @@ fun CategoriesFilter(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsList(
     products: Map<ExpirySections, List<Product>>,
-    goToProductDetails: (Int) -> Unit = {}
+    modifier: Modifier = Modifier,
+    goToProductDetails: (Int) -> Unit = {},
+    onSwipe: (Product) -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -152,15 +167,47 @@ fun ProductsList(
                 )
             }
             items(items = section.value, key = { product -> product.id }) { product ->
-                ProductItem(
-                    product = product,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            goToProductDetails(product.id)
+                val dismissState = rememberSwipeToDismissState(
+                    confirmValueChange = {
+                        if (it == SwipeToDismissValue.EndToStart) {
+                            onSwipe(product)
                         }
+                        false
+                    },
+                    positionalThreshold = { totalDistance ->
+                        totalDistance * 0.5f
+                    }
                 )
-                HorizontalDivider()
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    backgroundContent = {
+                        Box(
+                            modifier = modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colorScheme.error)
+                                .padding(16.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onError,
+                                modifier = modifier.align(Alignment.CenterEnd)
+                            )
+                        }
+                    },
+                    enableDismissFromStartToEnd = false
+                ) {
+                    ProductItem(
+                        product = product,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surface)
+                            .clickable {
+                                goToProductDetails(product.id)
+                            }
+                    )
+                }
             }
         }
     }

@@ -5,9 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gones.foodinventorykotlin.domain.usecase.CategoryUseCase
 import com.gones.foodinventorykotlin.domain.usecase.ProductUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 
 class HomeViewModel(
@@ -41,6 +44,13 @@ class HomeViewModel(
             is HomeEvent.CategorySelected -> {
                 state.value = state.value.copy(categoryId = event.categoryId)
                 getProducts()
+            }
+
+            is HomeEvent.ConsumeProduct -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    productUseCase.consumedProduct(event.product)
+                    getProducts()
+                }
             }
         }
     }

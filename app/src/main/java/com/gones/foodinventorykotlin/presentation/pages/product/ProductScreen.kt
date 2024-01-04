@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -59,7 +59,7 @@ fun ProductScreen(
     snackbarHostState: SnackbarHostState,
     navController: NavController,
 ) {
-    val viewModel = getViewModel<ProductViewModel>(
+    val viewModel = koinViewModel<ProductViewModel>(
         parameters = {
             parametersOf(barcode, id)
         }
