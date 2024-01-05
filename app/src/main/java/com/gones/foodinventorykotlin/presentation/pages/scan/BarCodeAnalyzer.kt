@@ -1,78 +1,50 @@
 package com.gones.foodinventorykotlin.presentation.pages.scan
 
-import android.graphics.ImageFormat
+import android.annotation.SuppressLint
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.BinaryBitmap
-import com.google.zxing.DecodeHintType
-import com.google.zxing.MultiFormatReader
-import com.google.zxing.PlanarYUVLuminanceSource
-import com.google.zxing.common.HybridBinarizer
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import timber.log.Timber
-import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
-class BarCodeAnalyzer(
-    private val onBarCodeScanned: (String) -> Unit,
+@SuppressLint("UnsafeOptInUsageError")
+class BarCodeAnalyser(
+    private val onBarcodeDetected: (barcodes: List<Barcode>) -> Unit,
 ) : ImageAnalysis.Analyzer {
-
-    private val supportedImageFormats = listOf(
-        ImageFormat.YUV_420_888,
-        ImageFormat.YUV_422_888,
-        ImageFormat.YUV_444_888,
-    )
-
-    private var lastAnalyzedTimestamp = 0L
+    private var lastAnalyzedTimeStamp = 0L
 
     override fun analyze(image: ImageProxy) {
         val currentTimestamp = System.currentTimeMillis()
-        if (currentTimestamp - lastAnalyzedTimestamp < TimeUnit.SECONDS.toMillis(1)) {
-            image.close()
-            return
-        }
+        if (currentTimestamp - lastAnalyzedTimeStamp >= TimeUnit.SECONDS.toMillis(1)) {
+            image.image?.let { imageToAnalyze ->
+                val options = BarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+                    .build()
+                val barcodeScanner = BarcodeScanning.getClient(options)
+                val imageToProcess =
+                    InputImage.fromMediaImage(imageToAnalyze, image.imageInfo.rotationDegrees)
 
-        if (image.format in supportedImageFormats) {
-            val bytes = image.planes.first().buffer.toByteArray()
-            val source = PlanarYUVLuminanceSource(
-                bytes,
-                image.width,
-                image.height,
-                0,
-                0,
-                image.width,
-                image.height,
-                false
-            )
-            val binaryBmp = BinaryBitmap(HybridBinarizer(source))
-            try {
-                val result = MultiFormatReader().apply {
-                    setHints(
-                        mapOf(
-                            DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
-                                BarcodeFormat.EAN_13,
-                                BarcodeFormat.EAN_8,
-                                BarcodeFormat.UPC_A,
-                                BarcodeFormat.UPC_E,
-                            )
-                        )
-                    )
-                }.decode(binaryBmp)
-                onBarCodeScanned(result.text)
-            } catch (e: Exception) {
-                Timber.e("DLOG: QrCodeAnalyzer: analyze: Exception: ${e.message}")
-                e.printStackTrace()
-            } finally {
-                lastAnalyzedTimestamp = currentTimestamp
-                image.close()
+                barcodeScanner.process(imageToProcess)
+                    .addOnSuccessListener { barcodes ->
+                        if (barcodes.isNotEmpty()) {
+                            onBarcodeDetected(barcodes)
+                        } else {
+                            Timber.e("DLOG: Analyze: No barcode Scanned")
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Timber.e("DLOG: ABarcodeAnalyser: Something went wrong $exception")
+                    }
+                    .addOnCompleteListener {
+                        image.close()
+                    }
             }
-        }
-    }
-
-    private fun ByteBuffer.toByteArray(): ByteArray {
-        rewind()
-        return ByteArray(remaining()).also {
-            get(it)
+            lastAnalyzedTimeStamp = currentTimestamp
+        } else {
+            image.close()
         }
     }
 }

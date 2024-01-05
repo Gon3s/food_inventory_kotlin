@@ -2,12 +2,10 @@ package com.gones.foodinventorykotlin.presentation.pages.scan
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -108,26 +106,22 @@ fun ScanScreen(
                             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                             .build()
                         preview.setSurfaceProvider(previewView.surfaceProvider)
-                        val imageAnalysis = ImageAnalysis.Builder()
-                            .setTargetResolution(
-                                Size(
-                                    previewView.width,
-                                    previewView.height
-                                )
-                            )
-                            .setBackpressureStrategy(STRATEGY_KEEP_ONLY_LATEST)
-                            .setOutputImageRotationEnabled(true)
+                        val imageAnalysis: ImageAnalysis = ImageAnalysis.Builder()
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
-                        imageAnalysis.setAnalyzer(
-                            ContextCompat.getMainExecutor(context),
-                            BarCodeAnalyzer { result ->
-                                Timber.d("DLOG : ScanScreen : scan $result")
-                                navController.navigate("product?barcode=$result") {
-                                    popUpTo(HomeRoute)
-                                }
+                            .also {
+                                it.setAnalyzer(
+                                    ContextCompat.getMainExecutor(context),
+                                    BarCodeAnalyser { barcodes ->
+                                        Timber.d("DLOG : ScanScreen : scan $barcodes")
+                                        navController.navigate("product?barcode=${barcodes.firstOrNull()?.rawValue}") {
+                                            popUpTo(HomeRoute)
+                                        }
+                                    }
+                                )
                             }
-                        )
                         try {
+                            cameraProviderFuture.get().unbindAll()
                             cameraProviderFuture.get().bindToLifecycle(
                                 lifecycleOwner,
                                 selector,
