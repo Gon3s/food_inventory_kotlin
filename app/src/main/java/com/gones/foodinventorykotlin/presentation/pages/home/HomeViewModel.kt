@@ -26,7 +26,7 @@ class HomeViewModel(
             productUseCase.getProducts(value.categoryId)
                 .onEach { products ->
                     state.value = state.value.copy(
-                        products = value.products + products,
+                        products = products,
                         isLoading = false
                     )
                 }.launchIn(viewModelScope + SupervisorJob())

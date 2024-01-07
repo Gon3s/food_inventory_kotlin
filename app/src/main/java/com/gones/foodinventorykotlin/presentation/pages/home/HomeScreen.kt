@@ -1,5 +1,9 @@
 package com.gones.foodinventorykotlin.presentation.pages.home
 
+import android.content.res.Configuration
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DrawerState
@@ -23,8 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -152,17 +159,19 @@ fun ProductsList(
     onSwipe: (Product) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val lazyState = rememberLazyListState()
 
-    LazyColumn {
+    LazyColumn(
+        state = lazyState
+    ) {
         products.forEach { section ->
             stickyHeader {
                 Text(
                     text = section.key.title.asString(context),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             }
@@ -178,6 +187,14 @@ fun ProductsList(
                         totalDistance * 0.5f
                     }
                 )
+
+                val animatedProgress = remember { Animatable(initialValue = 0.5f) }
+                LaunchedEffect(Unit) {
+                    animatedProgress.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(300, easing = LinearEasing)
+                    )
+                }
 
                 SwipeToDismissBox(
                     state = dismissState,
@@ -196,13 +213,18 @@ fun ProductsList(
                             )
                         }
                     },
-                    enableDismissFromStartToEnd = false
+                    enableDismissFromStartToEnd = false,
+                    modifier = modifier
+                        .graphicsLayer(
+                            scaleY = animatedProgress.value,
+                            scaleX = animatedProgress.value
+                        )
+                        .fillMaxWidth()
                 ) {
                     ProductItem(
                         product = product,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface)
+                        modifier = modifier
+                            .fillParentMaxWidth()
                             .clickable {
                                 goToProductDetails(product.id)
                             }
@@ -232,7 +254,7 @@ fun CategoriesFilterPreview() {
     )
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 fun ProductsListPreview() {
     ProductsList(
