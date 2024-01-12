@@ -24,10 +24,6 @@ android {
 
     buildTypes {
         appcenter {
-            buildConfigField "String", 'SUPABASE_URL', "\"${System.env.SUPABASE_URL}\""
-            buildConfigField "String", 'SUPABASE_KEY', "\"${System.env.SUPABASE_KEY}\""
-            buildConfigField "String", 'APP_CENTER_KEY', "\"${System.env.APP_CENTER_KEY}\""
-
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -35,24 +31,30 @@ android {
         debug {
             Properties secretProperties = new Properties()
             secretProperties.load(project.rootProject.file('secrets.properties').newDataInputStream())
-
-            buildType.buildConfigField "String", 'SUPABASE_URL', "\"${secretProperties.getProperty('SUPABASE_URL')}\""
-            buildType.buildConfigField "String", 'SUPABASE_KEY', "\"${secretProperties.getProperty('SUPABASE_KEY')}\""
-            buildType.buildConfigField "String", 'APP_CENTER_KEY', "\"${secretProperties.getProperty('APP_CENTER_KEY')}\""
         }
 
         release {
-            Properties secretProperties = new Properties()
-            secretProperties.load(project.rootProject.file('secrets.properties').newDataInputStream())
-
-            buildType.buildConfigField "String", 'SUPABASE_URL', "\"${secretProperties.getProperty('SUPABASE_URL')}\""
-            buildType.buildConfigField "String", 'SUPABASE_KEY', "\"${secretProperties.getProperty('SUPABASE_KEY')}\""
-            buildType.buildConfigField "String", 'APP_CENTER_KEY', "\"${secretProperties.getProperty('APP_CENTER_KEY')}\""
-
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        if (names.contains("appcenter")) {
+            buildConfigField "String", 'SUPABASE_URL', "\"${System.env.SUPABASE_URL}\""
+            buildConfigField "String", 'SUPABASE_KEY', "\"${System.env.SUPABASE_KEY}\""
+            buildConfigField "String", 'APP_CENTER_KEY', "\"${System.env.APP_CENTER_KEY}\""
+        } else {
+            Properties secretProperties = new Properties()
+            secretProperties.load(project.rootProject.file('secrets.properties').newDataInputStream())
+
+            buildConfigField "String", 'SUPABASE_URL', "\"${secretProperties.getProperty('SUPABASE_URL')}\""
+            buildConfigField "String", 'SUPABASE_KEY', "\"${secretProperties.getProperty('SUPABASE_KEY')}\""
+            buildConfigField "String", 'APP_CENTER_KEY', "\"${secretProperties.getProperty('APP_CENTER_KEY')}\""
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
