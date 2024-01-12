@@ -16,9 +16,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.gones.foodinventorykotlin.BuildConfig
 import com.gones.foodinventorykotlin.presentation.components.drawer.DrawerScreen
 import com.gones.foodinventorykotlin.presentation.components.scaffold.FoodInventoryScaffold
 import com.gones.foodinventorykotlin.presentation.theme.FoodInventoryTheme
+import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -28,6 +32,11 @@ class MainActivity(
     private val viewModel by viewModel<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AppCenter.start(
+            application, BuildConfig.APP_CENTER_KEY,
+            Analytics::class.java, Crashes::class.java
+        )
 
         setupSplashScreen()
 

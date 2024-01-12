@@ -26,6 +26,7 @@ android {
 
         buildConfigField "String", 'SUPABASE_URL', "\"${secretProperties.getProperty('SUPABASE_URL')}\""
         buildConfigField "String", 'SUPABASE_KEY', "\"${secretProperties.getProperty('SUPABASE_KEY')}\""
+        buildConfigField "String", 'APP_CENTER_KEY', "\"${secretProperties.getProperty('APP_CENTER_KEY')}\""
     }
 
     buildTypes {
@@ -68,6 +69,7 @@ dependencies {
     def glide_version = '4.16.0'
     def compose_version = '1.2.0-beta01'
     def lifecycle_version = "2.6.2"
+    def appCenterSdkVersion = '4.4.5'
 
     implementation 'androidx.annotation:annotation:1.7.1'
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
@@ -145,6 +147,10 @@ dependencies {
 
     /* DataStore */
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    /* AppCenter */
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
     // UI Tests
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
