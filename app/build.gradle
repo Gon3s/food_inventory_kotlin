@@ -6,7 +6,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
-def setSecretProperties(buildType) {
+ext.setSecretProperties = { buildType ->
     Properties secretProperties = new Properties()
     secretProperties.load(project.rootProject.file('secrets.properties').newDataInputStream())
 
@@ -32,6 +32,15 @@ android {
     }
 
     buildTypes {
+        appcenter {
+            buildConfigField "String", 'SUPABASE_URL', "\"${System.env.SUPABASE_URL}\""
+            buildConfigField "String", 'SUPABASE_KEY', "\"${System.env.SUPABASE_KEY}\""
+            buildConfigField "String", 'APP_CENTER_KEY', "\"${System.env.APP_CENTER_KEY}\""
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
         debug {
             setSecretProperties(it)
         }
@@ -41,12 +50,6 @@ android {
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
-        appcenter {
-            buildConfigField "String", 'SUPABASE_URL', "\"${System.env.SUPABASE_URL}\""
-            buildConfigField "String", 'SUPABASE_KEY', "\"${System.env.SUPABASE_KEY}\""
-            buildConfigField "String", 'APP_CENTER_KEY', "\"${System.env.APP_CENTER_KEY}\""
         }
     }
     compileOptions {
