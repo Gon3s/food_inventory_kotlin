@@ -29,8 +29,6 @@ android {
         }
 
         debug {
-            Properties secretProperties = new Properties()
-            secretProperties.load(project.rootProject.file('secrets.properties').newDataInputStream())
         }
 
         release {
