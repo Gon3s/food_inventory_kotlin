@@ -112,7 +112,7 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
 
     // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
 
     // Integration with activities
     implementation 'androidx.activity:activity-compose:1.8.2'
